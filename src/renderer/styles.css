@@ -119,15 +119,20 @@ h1{margin:2px 0 0;font-size:36px;line-height:1.1;font-weight:800}
 .lic-note{display:flex;align-items:center;gap:6px;font-size:12px;color:#8b96b3;margin-top:auto}
 .key-row input{min-width:0}.key-row input::placeholder{color:#6b7591}
 .status[hidden]{display:none}
-/* quét mã: QR lớn bên trái, thông tin bên phải – không che, không cần cuộn */
-.pay-body{display:flex;gap:22px;padding:18px 20px;align-items:flex-start}
-.pay-left{flex:none;display:flex;flex-direction:column;align-items:center;gap:8px}
-.qr-box.big{width:min(320px,calc(100vh - 230px));height:min(320px,calc(100vh - 230px));min-width:230px;min-height:230px;padding:10px}
+/* quét mã: dạng DỌC – QR lớn ở trên, thông tin gọn ở dưới, không bị che, không cần cuộn */
+.modal.pay-modal{width:480px}
+.pay-body{display:flex;flex-direction:column;align-items:center;gap:8px;padding:12px 20px 10px}
+.qr-box.big{--q:clamp(200px,calc(100vh - 410px),320px);width:var(--q);height:var(--q);padding:8px;flex:none}
 .qr-box.big img{width:100%;height:100%;object-fit:contain;image-rendering:pixelated}
-.pay-info{flex:1;min-width:0;display:flex;flex-direction:column;gap:8px}
-.pay-info .row{padding:8px 12px}
-.amount-row{display:flex;align-items:baseline;justify-content:space-between;gap:10px;padding:4px 2px}
-.amount-row small{color:#a3adc9;font-size:13px}.amount-row .amount{font-size:30px}
+.pay-info{width:100%;display:flex;flex-direction:column;align-items:center;gap:8px}
+.pay-info .amount{font-size:28px;line-height:1.1}
+.kv{width:100%;border-radius:10px;background:#141c38;border:1px solid #232B4A;padding:2px 12px}
+.kv>div{display:flex;justify-content:space-between;align-items:center;gap:10px;min-height:30px;font-size:13.5px;border-bottom:1px solid #232B4A}
+.kv>div:last-child{border-bottom:0}.kv span{color:#a3adc9}.kv b{display:flex;align-items:center;gap:6px;text-align:right;word-break:break-all}
+.kv .ck-row b{font:700 15px Consolas,Menlo,monospace;color:#d9ceff}
+.kv .copy{width:24px;height:24px;font-size:12px}
+.pay-info .status{width:100%;padding:7px 12px;font-size:12px}
+.pay-modal .m-foot{padding:8px 20px}.pay-modal .btn-ghost,.pay-modal .btn-trial{height:36px}
 /* kích hoạt thành công */
 .done-body{display:flex;flex-direction:column;align-items:center;gap:12px;padding:24px 26px 22px;text-align:center}
 .done-icon{width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#22c55e,#10b981);color:#fff;font-size:38px;font-weight:900;display:flex;align-items:center;justify-content:center;box-shadow:0 10px 34px rgba(34,197,94,.45)}

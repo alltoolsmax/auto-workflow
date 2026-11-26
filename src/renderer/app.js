@@ -159,7 +159,7 @@ async function openQR(plan) {
   const statusEl = h('div', { class: 'status wait' }, h('span', { class: 'sd' }), h('span', {}, 'Đang tạo đơn thanh toán…'));
   const qrBox = h('div', { class: 'qr-box big' }, h('div', { class: 'scan' }), h('div', { class: 'ph' }, 'Đang tạo mã QR…'));
   const info = h('div', { class: 'pay-info' }, statusEl);
-  showModal('Thanh toán gói ' + plan.name, '▦', [h('div', { class: 'pay-body' }, h('div', { class: 'pay-left' }, qrBox, h('div', { class: 'help' }, 'Mở app ngân hàng › Quét mã QR')), info),
+  showModal('Thanh toán gói ' + plan.name, '▦', [h('div', { class: 'pay-body' }, qrBox, info),
     h('div', { class: 'm-foot' }, h('div', { class: 'm-actions' }, h('button', { class: 'btn-ghost', onclick: () => openPayment() }, '← Chọn gói khác'),
       h('button', { class: 'btn-trial', onclick: () => { closeModal(); openTrial(); } }, 'Tiếp tục dùng thử →')))], 'pay-modal');
   const setStatus = (cls, text) => { statusEl.className = 'status ' + cls; statusEl.lastChild.textContent = text; };
@@ -170,14 +170,14 @@ async function openQR(plan) {
   qrBox.append(o.qr_url ? h('img', { src: o.qr_url, alt: 'Mã QR chuyển khoản' }) : h('div', { class: 'ph' }, 'Quét bằng app ngân hàng'));
   info.innerHTML = '';
   info.append(
-    h('div', { class: 'amount-row' }, h('small', {}, 'Số tiền'), h('div', { class: 'amount' }, fmtVnd(o.amount))),
-    bank.id ? h('div', { class: 'row' }, h('span', {}, 'Ngân hàng'), h('b', {}, bank.id)) : null,
-    h('div', { class: 'row' }, h('span', {}, 'Số tài khoản'), h('b', {}, bank.account || '', copyBtn(bank.account || ''))),
-    bank.name ? h('div', { class: 'row' }, h('span', {}, 'Chủ tài khoản'), h('b', {}, bank.name)) : null,
-    h('div', { class: 'code-row' }, h('div', {}, h('small', {}, 'Nội dung chuyển khoản'), h('b', {}, o.content)), copyBtn(o.content)),
-    h('div', { class: 'help' }, `Giữ đúng nội dung chuyển khoản · đơn hết hạn sau ${Math.round((o.expires_in || 1800) / 60)} phút`),
+    h('div', { class: 'amount' }, fmtVnd(o.amount)),
+    h('div', { class: 'kv' },
+      bank.id ? h('div', {}, h('span', {}, 'Ngân hàng'), h('b', {}, bank.id)) : null,
+      h('div', {}, h('span', {}, 'Số tài khoản'), h('b', {}, bank.account || '', copyBtn(bank.account || ''))),
+      bank.name ? h('div', {}, h('span', {}, 'Chủ tài khoản'), h('b', {}, bank.name)) : null,
+      h('div', { class: 'ck-row' }, h('span', {}, 'Nội dung CK'), h('b', {}, o.content, copyBtn(o.content)))),
     statusEl);
-  setStatus('wait', 'Đang chờ chuyển khoản… tự kích hoạt ngay khi nhận tiền.');
+  setStatus('wait', `Đang chờ chuyển khoản · tự kích hoạt khi nhận tiền · hết hạn sau ${Math.round((o.expires_in || 1800) / 60)} phút`);
   clearInterval(payTimer);
   payTimer = setInterval(async () => {
     let s;
