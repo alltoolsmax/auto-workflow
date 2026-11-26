@@ -432,10 +432,13 @@ async function act(a,key){let body={key};
     async w_orders(m) {
       const j = await AW('orders');
       const tag = (s) => ({ paid: 't-paid', pending: '', review: 't-exp', expired: 't-revoked' }[s] || '');
-      m.innerHTML = `<table><tr><th>Lúc</th><th>Mã đơn</th><th>Gói</th><th>Số tiền</th><th>Trạng thái</th><th>Key</th></tr>` +
+      m.innerHTML = `<table><tr><th>Lúc</th><th>Mã đơn</th><th>Gói</th><th>Số tiền</th><th>Trạng thái</th><th>Key</th><th></th></tr>` +
         (j.orders || []).map((o) => `<tr><td class="mu">${dt(+o.created_at)}</td><td class="mono">${esc(o.code)}</td><td>${esc(o.plan)}</td><td>${fmt(+o.amount)}</td>
-          <td><span class="tag ${tag(o.status)}">${esc(o.status)}</span></td><td class="k">${esc(o.key || '')}</td></tr>`).join('') + '</table>' +
-        '<p class="mu">Đơn thiếu tiền (review) cần xử lý tay: xác nhận ở mục Đơn hàng của Video AI/Max AI hoặc cấp key thủ công qua lệnh w_order_paid.</p>';
+          <td><span class="tag ${tag(o.status)}">${esc(o.status)}</span></td><td class="k">${esc(o.key || '')}</td>
+          <td class="acts">${o.status != 'paid' ? `<button class="g" onclick="paid('w_order_paid','${esc(o.code)}')">Xác nhận đã nhận tiền</button>` : `<button class="g" onclick="copy('${esc(o.key || '')}')">Chép key</button>`}</td></tr>`).join('') + '</table>' +
+        '<p class="mu">Tiền về đúng nội dung CK thì đơn tự chuyển "paid" và app của khách tự kích hoạt. Đơn chưa tự nhận (thiếu tiền, sai nội dung…) bấm "Xác nhận đã nhận tiền" — app đang mở sẽ tự kích hoạt, hoặc gửi key cho khách.</p>' +
+        (j.transactions && j.transactions.length ? '<h3 style="margin-top:18px">Giao dịch SePay gần đây</h3><table><tr><th>Lúc</th><th>Mã đơn</th><th>Số tiền</th><th>Nội dung</th><th>Kết quả</th></tr>' +
+          j.transactions.map((x) => `<tr><td class="mu">${dt(+x.created_at)}</td><td class="mono">${esc(x.code || '')}</td><td>${fmt(+x.amount)}</td><td class="mu">${esc(x.content || '')}</td><td>${esc(x.result || '')}</td></tr>`).join('') + '</table>' : '');
     },
 
     async w_release(m) {

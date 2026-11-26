@@ -138,7 +138,8 @@ require_once $maxLib;
             }
             out(['ok' => true, 'guides' => $pdo->query('SELECT page, url, updated_at FROM guides')->fetchAll()]);
         case 'orders':
-            out(['ok' => true, 'orders' => $pdo->query('SELECT * FROM orders ORDER BY created_at DESC LIMIT 300')->fetchAll(), 'now' => $t]);
+            out(['ok' => true, 'orders' => $pdo->query('SELECT * FROM orders ORDER BY created_at DESC LIMIT 300')->fetchAll(),
+                'transactions' => $pdo->query('SELECT * FROM transactions ORDER BY created_at DESC LIMIT 50')->fetchAll(), 'now' => $t]);
         case 'order_paid':           // xác nhận tay đơn chờ / thiếu tiền → tạo key
             $q = $pdo->prepare('SELECT * FROM orders WHERE code=?');
             $q->execute([(string)($b['code'] ?? '')]);
