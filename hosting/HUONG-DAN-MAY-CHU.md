@@ -12,8 +12,16 @@ File zip này chỉ chứa FILE MỚI (không trùng bất kỳ file nào của 
 - Cơ sở dữ liệu SQLite tự tạo trong `active_private/autoworkflow/data/`.
 - Thư mục `active_private/autoworkflow` cần quyền ghi cho PHP.
 
+## Gắn vào TRANG QUẢN TRỊ CHUNG (nút "🔀 Auto WorkFlow" cạnh Video AI · Voice AI · GCloud Hub · Max AI)
+1. Upload `admin/awf-admin.js` và `admin/awf-install.php` (ghi đè).
+2. Mở `https://active.mrhuynh.net/admin/awf-install.php`, nhập mật khẩu quản trị, bấm **Gắn vào quản trị chung**.
+   Trình cài chỉ thêm đúng 1 dòng `<script src="awf-admin.js"></script>` vào `admin/index.html`, sao lưu file cũ
+   thành `index.html.bak-awf-<ngày giờ>`; chạy lại không thêm trùng; có nút **Gỡ**.
+3. Mở trang quản trị chung, bấm **🔀 Auto WorkFlow**. Trang riêng `awf.html` vẫn dùng được.
+Lưu ý: sau này nếu thay `admin/index.html` bằng bản mới (vd. khi cập nhật Video AI / Max AI), chạy lại bước 2.
+
 ## Không đụng tới
-Không sửa `admin/index.html`, `admin/api.php` hay webhook dùng chung.
+Không sửa `admin/api.php` hay webhook dùng chung (lệnh của Auto WorkFlow đi qua `admin/awf.php` riêng).
 
 ## Sau khi upload
 - Khóa công khai cho app: `https://active.mrhuynh.net/autoworkflow/v1/pubkey` → dán vào GitHub Secret `AWF_PUBLIC_KEY`.

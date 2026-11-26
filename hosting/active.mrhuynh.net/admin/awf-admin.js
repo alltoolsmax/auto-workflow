@@ -1,6 +1,35 @@
 /* Auto WorkFlow - Mr. Huỳnh · mục quản trị trong trang chung active.mrhuynh.net/admin.
    index.html nạp file này sau script chính; dùng lại $, esc, dt, fmt, api, toast, go, R, TABS của trang. */
 (function () {
+  // ---- Gắn vào TRANG QUẢN TRỊ CHUNG (index.html): thêm nút "Auto WorkFlow" cạnh Video AI · Voice AI · GCloud Hub ·
+  // Max AI, chuyển các lệnh w_… sang awf.php. Mở riêng awf.html thì phần này không chạy (trang đó tự lo).
+  const bar = document.querySelector('header .prod');
+  if (bar && typeof setProd === 'function') {
+    if (!document.getElementById('pa')) {
+      bar.insertAdjacentHTML('beforeend', '<button id="pa" class="awf" onclick="setProd(\'awf\')">🔀 Auto WorkFlow</button>');
+      const st = document.createElement('style');
+      st.textContent = '.prod button.on.awf{background:#5a3410;border-color:var(--ac)}';
+      document.head.appendChild(st);
+    }
+    const baseApi = window.api;
+    window.api = async function (a, body, qs = '') {
+      if (!/^w_/.test(a)) return baseApi(a, body, qs);
+      const r = await fetch('awf.php?a=' + a + qs, { method: body ? 'POST' : 'GET',
+        headers: { 'x-admin-token': T, 'content-type': 'application/json' }, body: body ? JSON.stringify(body) : undefined });
+      let j; try { j = await r.json(); } catch (e) { j = { ok: false, message: 'Máy chủ trả về lỗi ' + r.status }; }
+      if (r.status == 401) { logout(); throw j; }
+      if (!j.ok) toast(j.message || 'Lỗi');
+      return j;
+    };
+    const baseSet = window.setProd;
+    window.setProd = function (p) {
+      baseSet(p);
+      document.getElementById('pa').classList.toggle('on', p == 'awf');
+    };
+    // đang ở mục Auto WorkFlow lúc tải lại trang → bật đúng nút
+    try { if (localStorage.getItem('prod') == 'awf' && document.getElementById('app').style.display != 'none') window.setProd('awf'); } catch (e) {}
+  }
+
   const AW = (a, body, qs) => api('w_' + a, body, qs);
   const ago = (t) => { const x = Date.now() / 1000 - t; return x < 120 ? 'vừa xong' : x < 3600 ? Math.floor(x / 60) + ' phút trước' : x < 86400 ? Math.floor(x / 3600) + ' giờ trước' : Math.floor(x / 86400) + ' ngày trước'; };
   const mb = (n) => (n ? (n / 1048576).toFixed(1) + ' MB' : '');
