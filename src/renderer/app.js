@@ -33,33 +33,18 @@ async function call(ch, ...a) {
 const licensed = () => Boolean(lic && lic.lifetime);   // "Mở ứng dụng" chỉ khi đã kích hoạt gói VĨNH VIỄN
 
 function renderLicense() {
-  const card = $('#trialCard');
-  card.classList.toggle('pro', licensed());
   const ob = $('#openBtn');
   ob.classList.toggle('locked', !licensed());
   ob.textContent = licensed() ? '▶ Mở ứng dụng' : '🔒 Mở ứng dụng';
   ob.title = licensed() ? 'Mở ứng dụng' : 'Kích hoạt gói VĨNH VIỄN để mở ứng dụng';
-  if (licensed()) {
-    $('#tcKicker').textContent = 'VĨNH VIỄN';
-    $('#tcTitle').textContent = lic.exp ? (lic.plan_name || 'Đã kích hoạt') + ' · còn ' + lic.days_left + ' ngày' : 'Đã kích hoạt · dùng mãi mãi';
-    $('#tcNote').textContent = 'Bấm để mở ứng dụng';
-    $('#tcBtn').textContent = 'Mở ▶';
-  } else {
-    $('#tcKicker').textContent = 'DÙNG THỬ';
-    $('#tcTitle').textContent = 'Miễn phí · đầy đủ tính năng';
-    $('#tcNote').textContent = 'Không cần thanh toán';
-    $('#tcBtn').textContent = 'Dùng thử ▶';
-  }
+  $('#licLine').classList.toggle('pro', licensed());
+  $('#llText').innerHTML = licensed() ? 'Đã kích hoạt gói <b>VĨNH VIỄN</b> · dùng mãi mãi trên máy này' : 'Gói <b>VĨNH VIỄN</b> · mua 1 lần, dùng mãi mãi';
+  $('#llBtn').hidden = licensed();
 }
 
 async function openApp() {          // chỉ khi đã kích hoạt VĨNH VIỄN → link "Mở ứng dụng" ở trang quản trị
   if (!licensed()) return openPayment();
   try { await window.awf.call('app:open', 'open'); }
-  catch (e) { toast(e.message); }
-}
-
-async function openTrial() {        // ai cũng dùng được → link "Dùng thử" ở trang quản trị
-  try { await window.awf.call('app:open', 'trial'); }
   catch (e) { toast(e.message); }
 }
 
@@ -93,7 +78,7 @@ async function activateKey(key, btn) {
   } catch (e) { toast(e.message); return false; } finally { if (btn) btn.disabled = false; }
 }
 
-// BƯỚC 1 – màn hình bản quyền: giới thiệu + mã máy, thẻ gói VĨNH VIỄN, ô nhập key, dùng thử
+// BƯỚC 1 – màn hình bản quyền: giới thiệu + mã máy, thẻ gói VĨNH VIỄN (gói duy nhất), ô nhập key
 async function openPayment() {
   const v = lic || {};
   const machine = v.machine || '';
@@ -118,14 +103,13 @@ async function openPayment() {
         } }, '💬 Qua Zalo'))),
     h('div', { class: 'lic-side' },
       h('div', { class: 'lic-hero' }, h('img', { src: '../../assets/icon.png', alt: '' }),
-        h('div', { class: 'grow' }, h('b', {}, 'Chọn gói để bắt đầu'), h('small', {}, 'Mua 1 lần, dùng mãi mãi trên máy này'))),
+        h('div', { class: 'grow' }, h('b', {}, 'Kích hoạt gói VĨNH VIỄN'), h('small', {}, 'Mua 1 lần, dùng mãi mãi trên máy này'))),
       h('div', { class: 'machine-row' }, h('small', {}, 'Mã máy'), h('code', {}, machine.slice(0, 20) + (machine ? '…' : '')), machine ? copyBtn(machine, 'Đã chép mã máy') : null),
       notice,
       h('div', {}, h('div', { class: 'label' }, 'Đã có key? Nhập vào đây'), h('div', { class: 'key-row' }, keyInput, actBtn)),
       h('div', { class: 'lic-note' }, '✓ 1 key cho 1 máy · hỗ trợ qua Zalo 0979 007 367'))),
     h('div', { class: 'm-foot' }, h('div', { class: 'm-actions' },
-      h('button', { class: 'btn-ghost', onclick: closeModal }, '← Quay lại'),
-      h('button', { class: 'btn-trial', onclick: () => { closeModal(); openTrial(); } }, 'Tiếp tục dùng thử →')))], 'lic-modal');
+      h('button', { class: 'btn-ghost', onclick: closeModal }, '← Quay lại')))], 'lic-modal');
 
   let plan = null; let payment = false;
   try {
@@ -140,7 +124,7 @@ async function openPayment() {
     buyBtn.onclick = () => openQR(plan);
   } else {
     notice.hidden = false;
-    notice.lastChild.textContent = 'Chưa tải được thông tin thanh toán (kiểm tra mạng). Bấm "Qua Zalo" để mua key, hoặc tiếp tục dùng thử.';
+    notice.lastChild.textContent = 'Chưa tải được thông tin thanh toán (kiểm tra mạng). Bấm "Qua Zalo" để mua key.';
   }
 }
 
@@ -160,8 +144,7 @@ async function openQR(plan) {
   const qrBox = h('div', { class: 'qr-box big' }, h('div', { class: 'scan' }), h('div', { class: 'ph' }, 'Đang tạo mã QR…'));
   const info = h('div', { class: 'pay-info' }, statusEl);
   showModal('Thanh toán gói ' + plan.name, '▦', [h('div', { class: 'pay-body' }, qrBox, info),
-    h('div', { class: 'm-foot' }, h('div', { class: 'm-actions' }, h('button', { class: 'btn-ghost', onclick: () => openPayment() }, '← Chọn gói khác'),
-      h('button', { class: 'btn-trial', onclick: () => { closeModal(); openTrial(); } }, 'Tiếp tục dùng thử →')))], 'pay-modal');
+    h('div', { class: 'm-foot' }, h('div', { class: 'm-actions' }, h('button', { class: 'btn-ghost', onclick: () => openPayment() }, '← Quay lại')))], 'pay-modal');
   const setStatus = (cls, text) => { statusEl.className = 'status ' + cls; statusEl.lastChild.textContent = text; };
   let o;
   try { o = await window.awf.call('lic:order', plan.code); } catch (e) { setStatus('err', e.message); return; }
@@ -197,7 +180,7 @@ async function openQR(plan) {
 /* ---------- Khởi động ---------- */
 async function init() {
   $('#openBtn').addEventListener('click', openApp);
-  $('#trialCard').addEventListener('click', () => (licensed() ? openApp() : openTrial()));
+  $('#llBtn').addEventListener('click', openPayment);
   $('#guideBtn').addEventListener('click', async () => {
     try { await window.awf.call('app:open', 'guide'); } catch (e) { toast('Chưa có video hướng dẫn. Liên hệ Zalo 0979 007 367.'); }
   });

@@ -187,7 +187,7 @@ function updateUrl() { return baseUrl(); }
 
 // ---- Liên kết do bạn đặt ở trang quản trị (Auto WorkFlow › Liên kết & video). Mất mạng → dùng bản đã lưu.
 const DEFAULT_LINKS = {
-  open: '', trial: '', library: 'https://mrhuynh.net/auto-workflow/', guide: '', tools: 'https://mrhuynh.net/tools',
+  open: '', library: 'https://mrhuynh.net/auto-workflow/', free: '', guide: '', tools: 'https://mrhuynh.net/tools',
   zalo: 'https://zalo.me/0979007367', email: 'mailto:info@mrhuynh.net',
   website: 'https://mrhuynh.net', facebook: 'https://facebook.com/mr.huynhxuyenson',
 };

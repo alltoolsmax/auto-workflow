@@ -329,8 +329,8 @@ async function act(a,key){let body={key};
 
   const LINKS = [
     ['open', 'Nút “Mở ứng dụng” – CHỈ khách đã kích hoạt VĨNH VIỄN (mở bằng Chrome)', 'https://flow.google.com/project/…/tool/…'],
-    ['trial', 'Nút “Dùng thử” – ai cũng mở được (mở bằng Chrome)', 'https://…'],
     ['library', 'Nút “Thư viện mẫu” – ai cũng mở được (mở bằng trình duyệt mặc định)', 'https://mrhuynh.net/auto-workflow/'],
+    ['free', 'Nút “Mẫu miễn phí” – ai cũng mở được (mở bằng trình duyệt mặc định)', 'https://…'],
     ['guide', 'Nút “Xem video hướng dẫn” (YouTube)', 'https://www.youtube.com/watch?v=…'],
     ['tools', 'Nút “Khám phá tiện ích AI khác”', 'https://mrhuynh.net/tools'],
     ['zalo', 'Zalo', 'https://zalo.me/0979007367'],
@@ -368,7 +368,7 @@ async function act(a,key){let body={key};
         <button class="g" onclick="copy('${k.key}')">Chép</button></td></tr>`).join('') + '</table>';
     },
     async w_create(m) {
-      WPLANS = (await AW('plans')).plans || [];
+      WPLANS = ((await AW('plans')).plans || []).filter((p) => +p.active);   // chỉ gói đang bán (VĨNH VIỄN)
       m.innerHTML = `<div class="row"><label>Gói<select id="wcp">${WPLANS.map((p) => `<option value="${p.code}">${esc(p.name)} — ${fmt(+p.price)}</option>`).join('')}</select></label>
         <label>Số lượng<input id="wcn" type="number" value="1" min="1" max="200" style="width:90px"></label>
         <label>Số ngày (0 = vĩnh viễn, trống = theo gói)<input id="wcd" type="number" style="width:220px"></label><label>Giá bán (trống = theo gói)<input id="wcpr" type="number" style="width:160px"></label></div>
