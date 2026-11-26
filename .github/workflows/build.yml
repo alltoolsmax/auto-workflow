@@ -18,6 +18,7 @@ concurrency:
 #   auto_workflow_win.zip          · file nén chứa auto_workflow_win.exe
 #   auto_workflow_mac_apple.dmg    · macOS chip Apple (M1/M2/M3...)
 #   auto_workflow_mac_intel.dmg    · macOS chip Intel
+#   auto_workflow_mac.zip          · file nén chứa cả 2 bộ cài Mac
 # Phát hành (giống Video AI / GCloud Hub): tăng "version" trong package.json rồi đẩy lên main → GitHub tự build và tạo
 # bản phát hành v<phiên bản>. Máy Mac của khách tự nhận; máy Windows nhận sau khi bấm "Phát hành" ở trang quản trị
 # (chọn "Bản Windows GitHub đã build"). Vẫn có thể phát hành bằng tag v1.2.3 như trước.
@@ -74,6 +75,8 @@ jobs:
           done
           for APP in dist/mac/*.app dist/mac-arm64/*.app; do codesign --verify --deep --strict "$APP"; done
           node tools/make-downloads.js mac
+          # Bản nén .zip chứa cả 2 bộ cài Mac (chip Apple + chip Intel)
+          (cd dist/downloads && zip -0 auto_workflow_mac.zip auto_workflow_mac_apple.dmg auto_workflow_mac_intel.dmg && unzip -l auto_workflow_mac.zip)
       - name: Đưa lên Releases
         if: startsWith(github.ref, 'refs/tags/v') || github.ref == 'refs/heads/main'
         shell: bash
