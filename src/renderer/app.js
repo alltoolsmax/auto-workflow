@@ -47,7 +47,7 @@ function renderLicense() {
   } else {
     $('#tcKicker').textContent = 'DÙNG THỬ';
     $('#tcTitle').textContent = 'Miễn phí · đầy đủ tính năng';
-    $('#tcNote').textContent = 'Bấm để dùng thử ngay, không cần thanh toán';
+    $('#tcNote').textContent = 'Không cần thanh toán';
     $('#tcBtn').textContent = 'Dùng thử ▶';
   }
 }

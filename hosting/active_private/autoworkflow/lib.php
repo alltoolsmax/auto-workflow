@@ -329,9 +329,9 @@ function api_plans(): void
         'contact' => ['zalo' => opt('contact_zalo', ''), 'phone' => opt('contact_phone', ''), 'name' => opt('contact_name', '')]]);
 }
 
-const LINK_KEYS = ['open', 'trial', 'guide', 'tools', 'zalo', 'email', 'website', 'facebook'];
+const LINK_KEYS = ['open', 'trial', 'library', 'guide', 'tools', 'zalo', 'email', 'website', 'facebook'];
 const LINK_DEFAULTS = [
-    'open' => '', 'trial' => '', 'guide' => '', 'tools' => 'https://mrhuynh.net/tools',
+    'open' => '', 'trial' => '', 'library' => 'https://mrhuynh.net/auto-workflow/', 'guide' => '', 'tools' => 'https://mrhuynh.net/tools',
     'zalo' => 'https://zalo.me/0979007367', 'email' => 'mailto:info@mrhuynh.net',
     'website' => 'https://mrhuynh.net', 'facebook' => 'https://facebook.com/mr.huynhxuyenson',
 ];
