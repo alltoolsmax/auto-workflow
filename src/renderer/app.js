@@ -88,7 +88,7 @@ async function activateKey(key, btn) {
   if (btn) btn.disabled = true;
   try {
     lic = await window.awf.call('lic:activate', key);
-    renderLicense(); closeModal(); toast('Kích hoạt thành công!'); openApp();
+    renderLicense(); showActivated(key);
     return true;
   } catch (e) { toast(e.message); return false; } finally { if (btn) btn.disabled = false; }
 }
@@ -105,10 +105,6 @@ async function openPayment() {
   const notice = h('div', { class: 'status warn', hidden: true }, h('span', { class: 'sd' }), h('span', {}, ''));
 
   showModal('Kích hoạt Auto WorkFlow', '★', [h('div', { class: 'lic-body' },
-    h('div', { class: 'lic-hero' }, h('img', { src: '../../assets/icon.png', alt: '' }),
-      h('div', { class: 'grow' }, h('b', {}, 'Chọn gói để bắt đầu'), h('small', {}, 'Mua 1 lần, dùng Auto WorkFlow mãi mãi trên máy này')),
-      h('div', { class: 'machine' }, h('small', {}, 'Mã máy'), h('div', {}, h('code', {}, machine.slice(0, 16) + (machine ? '…' : '')), machine ? copyBtn(machine, 'Đã chép mã máy') : null))),
-    h('div', { class: 'label' }, 'Chọn gói'),
     h('div', { class: 'plan big hot' },
       h('span', { class: 'ribbon' }, 'Mua 1 lần, dùng mãi mãi'),
       h('div', { class: 'plan-top' }, h('span', { class: 'star' }, '★'), h('b', {}, 'VĨNH VIỄN')),
@@ -120,9 +116,13 @@ async function openPayment() {
           copyText(`Mua Auto WorkFlow – gói VĨNH VIỄN (${priceEl.textContent})\nMã máy: ${machine}`, 'Đã chép tin nhắn — dán vào Zalo rồi gửi');
           window.awf.call('app:open', 'zalo').catch(() => {});
         } }, '💬 Qua Zalo'))),
-    notice,
-    h('div', {}, h('div', { class: 'label' }, 'Đã có key? Nhập vào đây'), h('div', { class: 'key-row' }, keyInput, actBtn)),
-    h('div', { class: 'lic-note' }, '✓ 1 key cho 1 máy · hỗ trợ trực tiếp qua Zalo 0979 007 367')),
+    h('div', { class: 'lic-side' },
+      h('div', { class: 'lic-hero' }, h('img', { src: '../../assets/icon.png', alt: '' }),
+        h('div', { class: 'grow' }, h('b', {}, 'Chọn gói để bắt đầu'), h('small', {}, 'Mua 1 lần, dùng mãi mãi trên máy này'))),
+      h('div', { class: 'machine-row' }, h('small', {}, 'Mã máy'), h('code', {}, machine.slice(0, 20) + (machine ? '…' : '')), machine ? copyBtn(machine, 'Đã chép mã máy') : null),
+      notice,
+      h('div', {}, h('div', { class: 'label' }, 'Đã có key? Nhập vào đây'), h('div', { class: 'key-row' }, keyInput, actBtn)),
+      h('div', { class: 'lic-note' }, '✓ 1 key cho 1 máy · hỗ trợ qua Zalo 0979 007 367'))),
     h('div', { class: 'm-foot' }, h('div', { class: 'm-actions' },
       h('button', { class: 'btn-ghost', onclick: closeModal }, '← Quay lại'),
       h('button', { class: 'btn-trial', onclick: () => { closeModal(); openTrial(); } }, 'Tiếp tục dùng thử →')))], 'lic-modal');
@@ -144,26 +144,39 @@ async function openPayment() {
   }
 }
 
+// Kích hoạt xong (quét QR hoặc nhập key) → thông báo + nút "Mở ứng dụng" (mở link đặt ở trang quản trị)
+function showActivated(key) {
+  showModal('Kích hoạt thành công', '✓', [h('div', { class: 'done-body' },
+    h('div', { class: 'done-icon' }, '✓'),
+    h('div', { class: 'done-title' }, 'Đã kích hoạt gói VĨNH VIỄN'),
+    h('div', { class: 'done-sub' }, 'Cảm ơn bạn đã ủng hộ! Từ giờ bấm "Mở ứng dụng" để dùng Auto WorkFlow mãi mãi trên máy này.'),
+    key ? h('div', { class: 'code-row' }, h('div', {}, h('small', {}, 'Key của bạn (đã lưu trong máy)'), h('b', {}, key)), copyBtn(key, 'Đã chép key')) : null,
+    h('button', { class: 'btn-primary sheen done-open', onclick: () => { closeModal(); openApp(); } }, '▶ Mở ứng dụng'))], 'done-modal');
+}
+
 // BƯỚC 2 – quét QR, tự kích hoạt khi nhận tiền
 async function openQR(plan) {
   const statusEl = h('div', { class: 'status wait' }, h('span', { class: 'sd' }), h('span', {}, 'Đang tạo đơn thanh toán…'));
-  const pay = h('div', { class: 'pay' }, h('div', { class: 'qr-box' }, h('div', { class: 'scan' }), h('div', { class: 'ph' }, 'Đang tạo mã QR…')));
-  showModal('Thanh toán gói ' + plan.name, '▦', [h('div', { class: 'pay-body' }, pay, statusEl),
-    h('div', { class: 'm-foot center' }, h('button', { class: 'btn-ghost', onclick: () => openPayment() }, '← Chọn gói khác'))], 'pay-modal');
+  const qrBox = h('div', { class: 'qr-box big' }, h('div', { class: 'scan' }), h('div', { class: 'ph' }, 'Đang tạo mã QR…'));
+  const info = h('div', { class: 'pay-info' }, statusEl);
+  showModal('Thanh toán gói ' + plan.name, '▦', [h('div', { class: 'pay-body' }, h('div', { class: 'pay-left' }, qrBox, h('div', { class: 'help' }, 'Mở app ngân hàng › Quét mã QR')), info),
+    h('div', { class: 'm-foot' }, h('div', { class: 'm-actions' }, h('button', { class: 'btn-ghost', onclick: () => openPayment() }, '← Chọn gói khác'),
+      h('button', { class: 'btn-trial', onclick: () => { closeModal(); openTrial(); } }, 'Tiếp tục dùng thử →')))], 'pay-modal');
   const setStatus = (cls, text) => { statusEl.className = 'status ' + cls; statusEl.lastChild.textContent = text; };
   let o;
   try { o = await window.awf.call('lic:order', plan.code); } catch (e) { setStatus('err', e.message); return; }
   const bank = o.bank || {};
-  pay.innerHTML = '';
-  pay.append(
-    h('div', { class: 'qr-box' }, o.qr_url ? h('img', { src: o.qr_url, alt: 'Mã QR chuyển khoản' }) : h('div', { class: 'ph' }, 'Quét bằng app ngân hàng')),
-    h('div', { class: 'amount' }, fmtVnd(o.amount)),
-    h('div', { class: 'pay-rows' },
-      bank.id ? h('div', { class: 'row' }, h('span', {}, 'Ngân hàng'), h('b', {}, bank.id)) : null,
-      h('div', { class: 'row' }, h('span', {}, 'Số tài khoản'), h('b', {}, bank.account || '', copyBtn(bank.account || ''))),
-      bank.name ? h('div', { class: 'row' }, h('span', {}, 'Chủ tài khoản'), h('b', {}, bank.name)) : null),
+  qrBox.innerHTML = '';
+  qrBox.append(o.qr_url ? h('img', { src: o.qr_url, alt: 'Mã QR chuyển khoản' }) : h('div', { class: 'ph' }, 'Quét bằng app ngân hàng'));
+  info.innerHTML = '';
+  info.append(
+    h('div', { class: 'amount-row' }, h('small', {}, 'Số tiền'), h('div', { class: 'amount' }, fmtVnd(o.amount))),
+    bank.id ? h('div', { class: 'row' }, h('span', {}, 'Ngân hàng'), h('b', {}, bank.id)) : null,
+    h('div', { class: 'row' }, h('span', {}, 'Số tài khoản'), h('b', {}, bank.account || '', copyBtn(bank.account || ''))),
+    bank.name ? h('div', { class: 'row' }, h('span', {}, 'Chủ tài khoản'), h('b', {}, bank.name)) : null,
     h('div', { class: 'code-row' }, h('div', {}, h('small', {}, 'Nội dung chuyển khoản'), h('b', {}, o.content)), copyBtn(o.content)),
-    h('div', { class: 'help' }, `Quét bằng app ngân hàng bất kỳ · giữ đúng nội dung CK · hết hạn sau ${Math.round((o.expires_in || 1800) / 60)} phút`));
+    h('div', { class: 'help' }, `Giữ đúng nội dung chuyển khoản · đơn hết hạn sau ${Math.round((o.expires_in || 1800) / 60)} phút`),
+    statusEl);
   setStatus('wait', 'Đang chờ chuyển khoản… tự kích hoạt ngay khi nhận tiền.');
   clearInterval(payTimer);
   payTimer = setInterval(async () => {
