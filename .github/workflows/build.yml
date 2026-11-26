@@ -15,6 +15,7 @@ concurrency:
 
 # Tệp phát hành có TÊN CỐ ĐỊNH, link .../releases/latest/download/<tên> không bao giờ đổi:
 #   auto_workflow_win.exe          · bộ cài Windows (khách cài lần đầu + máy chủ dùng làm bản tự cập nhật)
+#   auto_workflow_win.zip          · file nén chứa auto_workflow_win.exe
 #   auto_workflow_mac_apple.dmg    · macOS chip Apple (M1/M2/M3...)
 #   auto_workflow_mac_intel.dmg    · macOS chip Intel
 # Phát hành (giống Video AI / GCloud Hub): tăng "version" trong package.json rồi đẩy lên main → GitHub tự build và tạo
@@ -55,6 +56,9 @@ jobs:
         run: |
           npx electron-builder --win nsis --x64 --publish never
           node tools/make-downloads.js win
+          # Bản nén .zip chứa bộ cài .exe (gửi qua Zalo/email không bị chặn file .exe)
+          Compress-Archive -Path dist/downloads/auto_workflow_win.exe -DestinationPath dist/downloads/auto_workflow_win.zip -Force
+          if (!(Test-Path dist/downloads/auto_workflow_win.zip)) { exit 1 }
       - name: Build macOS
         if: matrix.name == 'mac'
         env:
