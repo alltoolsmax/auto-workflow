@@ -1,45 +1,36 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
   <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#1a2352"/><stop offset="1" stop-color="#0b1020"/>
-    </linearGradient>
-    <radialGradient id="glow" cx="0.72" cy="0.3" r="0.6">
-      <stop offset="0" stop-color="#8b5cf6" stop-opacity="0.45"/><stop offset="1" stop-color="#8b5cf6" stop-opacity="0"/>
-    </radialGradient>
-    <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#5b8cff"/><stop offset="1" stop-color="#8b5cf6"/>
-    </linearGradient>
-    <linearGradient id="g2" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#8b5cf6"/><stop offset="1" stop-color="#b06cff"/>
-    </linearGradient>
-    <linearGradient id="g3" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#ec4899"/><stop offset="1" stop-color="#f472b6"/>
-    </linearGradient>
-    <linearGradient id="wire" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0" stop-color="#5b8cff"/><stop offset="0.5" stop-color="#8b5cf6"/><stop offset="1" stop-color="#ec4899"/>
-    </linearGradient>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#5b8cff"/><stop offset=".5" stop-color="#8b5cf6"/><stop offset="1" stop-color="#ec4899"/></linearGradient>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#18203d"/><stop offset="1" stop-color="#0b1020"/></linearGradient>
+    <radialGradient id="glow" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#8b5cf6" stop-opacity=".35"/><stop offset="1" stop-color="#8b5cf6" stop-opacity="0"/></radialGradient>
   </defs>
-  <rect width="1024" height="1024" rx="230" fill="url(#bg)"/>
-  <rect width="1024" height="1024" rx="230" fill="url(#glow)"/>
-  <g transform="translate(32 0)">
-  <!-- dây nối -->
-  <g fill="none" stroke="url(#wire)" stroke-width="46" stroke-linecap="round">
-    <path d="M360 512 C 480 512, 470 318, 600 318"/>
-    <path d="M360 512 C 480 512, 470 706, 600 706"/>
+  <!-- khung Max AI -->
+  <rect x="64" y="64" width="896" height="896" rx="210" fill="url(#bg)"/>
+  <rect x="80" y="80" width="864" height="864" rx="196" fill="none" stroke="url(#g)" stroke-width="32"/>
+  <circle cx="512" cy="512" r="330" fill="url(#glow)"/>
+  <g transform="translate(512 512) scale(.88) translate(-512 -512)">
+  <!-- dây workflow -->
+  <g fill="none" stroke-width="26" stroke-linecap="round">
+    <path d="M250 512 H318" stroke="#5b8cff"/>
+    <path d="M706 512 C 760 512, 742 300, 790 300" stroke="#c058e8"/>
+    <path d="M706 512 C 760 512, 742 724, 790 724" stroke="#ec4899"/>
   </g>
-  <!-- nút bắt đầu (trigger) -->
-  <circle cx="262" cy="512" r="128" fill="url(#g1)"/>
-  <path d="M286 418 L214 528 H262 L242 606 L314 492 H266 Z" fill="#fff"/>
-  <!-- 2 bước xử lý -->
-  <rect x="590" y="218" width="236" height="200" rx="52" fill="url(#g2)"/>
-  <rect x="590" y="606" width="236" height="200" rx="52" fill="url(#g3)"/>
-  <g fill="none" stroke="#fff" stroke-width="34" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M656 320 L694 356 L762 286"/>
-    <path d="M656 708 L694 744 L762 674"/>
-  </g>
-  <!-- cổng nối -->
+  <!-- hạt dữ liệu chạy trên dây -->
   <g fill="#fff">
-    <circle cx="390" cy="512" r="20"/><circle cx="590" cy="318" r="20"/><circle cx="590" cy="706" r="20"/>
+    <circle cx="284" cy="512" r="13"/><circle cx="752" cy="390" r="12"/><circle cx="752" cy="634" r="12"/>
   </g>
-</g>
+  <!-- nút vào (trigger) -->
+  <circle cx="196" cy="512" r="56" fill="#5b8cff"/>
+  <circle cx="196" cy="512" r="20" fill="#fff"/>
+  <!-- khung Play -->
+  <rect x="318" y="372" width="388" height="280" rx="60" fill="#0f1530" stroke="url(#g)" stroke-width="40"/>
+  <path d="M470 452 L470 572 L572 512 Z" fill="url(#g)" stroke="url(#g)" stroke-width="24" stroke-linejoin="round"/>
+  <!-- 2 nút ra -->
+  <rect x="790" y="246" width="108" height="108" rx="30" fill="#8b5cf6"/>
+  <rect x="790" y="670" width="108" height="108" rx="30" fill="#ec4899"/>
+  <g fill="none" stroke="#fff" stroke-width="18" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M818 302 L838 320 L872 284"/>
+    <path d="M818 726 L838 744 L872 708"/>
+  </g>
+  </g>
 </svg>
