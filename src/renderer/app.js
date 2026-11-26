@@ -30,11 +30,15 @@ async function call(ch, ...a) {
   catch (e) { toast(e.message); throw e; }
 }
 
-const licensed = () => Boolean(lic && lic.ok && lic.kind !== 'dev');
+const licensed = () => Boolean(lic && lic.lifetime);   // "Mở ứng dụng" chỉ khi đã kích hoạt gói VĨNH VIỄN
 
 function renderLicense() {
   const card = $('#trialCard');
   card.classList.toggle('pro', licensed());
+  const ob = $('#openBtn');
+  ob.classList.toggle('locked', !licensed());
+  ob.textContent = licensed() ? '▶ Mở ứng dụng' : '🔒 Mở ứng dụng';
+  ob.title = licensed() ? 'Mở ứng dụng' : 'Kích hoạt gói VĨNH VIỄN để mở ứng dụng';
   if (licensed()) {
     $('#tcKicker').textContent = 'VĨNH VIỄN';
     $('#tcTitle').textContent = lic.exp ? (lic.plan_name || 'Đã kích hoạt') + ' · còn ' + lic.days_left + ' ngày' : 'Đã kích hoạt · dùng mãi mãi';
@@ -43,13 +47,19 @@ function renderLicense() {
   } else {
     $('#tcKicker').textContent = 'DÙNG THỬ';
     $('#tcTitle').textContent = 'Miễn phí · đầy đủ tính năng';
-    $('#tcNote').textContent = 'Bấm để mở ứng dụng ngay, không cần thanh toán';
+    $('#tcNote').textContent = 'Bấm để dùng thử ngay, không cần thanh toán';
     $('#tcBtn').textContent = 'Dùng thử ▶';
   }
 }
 
-async function openApp() {
+async function openApp() {          // chỉ khi đã kích hoạt VĨNH VIỄN → link "Mở ứng dụng" ở trang quản trị
+  if (!licensed()) return openPayment();
   try { await window.awf.call('app:open', 'open'); }
+  catch (e) { toast(e.message); }
+}
+
+async function openTrial() {        // ai cũng dùng được → link "Dùng thử" ở trang quản trị
+  try { await window.awf.call('app:open', 'trial'); }
   catch (e) { toast(e.message); }
 }
 
@@ -115,7 +125,7 @@ async function openPayment() {
     h('div', { class: 'lic-note' }, '✓ 1 key cho 1 máy · hỗ trợ trực tiếp qua Zalo 0979 007 367')),
     h('div', { class: 'm-foot' }, h('div', { class: 'm-actions' },
       h('button', { class: 'btn-ghost', onclick: closeModal }, '← Quay lại'),
-      h('button', { class: 'btn-trial', onclick: () => { closeModal(); openApp(); } }, 'Tiếp tục dùng thử và mở ứng dụng →')))], 'lic-modal');
+      h('button', { class: 'btn-trial', onclick: () => { closeModal(); openTrial(); } }, 'Tiếp tục dùng thử →')))], 'lic-modal');
 
   let plan = null; let payment = false;
   try {
@@ -173,8 +183,8 @@ async function openQR(plan) {
 
 /* ---------- Khởi động ---------- */
 async function init() {
-  $('#openBtn').addEventListener('click', () => { if (licensed() || (lic && lic.kind === 'dev')) openApp(); else openPayment(); });
-  $('#trialCard').addEventListener('click', openApp);
+  $('#openBtn').addEventListener('click', openApp);
+  $('#trialCard').addEventListener('click', () => (licensed() ? openApp() : openTrial()));
   $('#guideBtn').addEventListener('click', async () => {
     try { await window.awf.call('app:open', 'guide'); } catch (e) { toast('Chưa có video hướng dẫn. Liên hệ Zalo 0979 007 367.'); }
   });

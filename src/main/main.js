@@ -73,10 +73,13 @@ function registerIpc() {
   handle('app:links', () => updater.links());
   handle('app:links-cached', () => updater.cachedLinks());
   handle('app:open', async (key) => {
+    // "Mở ứng dụng" chỉ dành cho máy đã kích hoạt gói VĨNH VIỄN (kiểm tra ở đây, không chỉ ở giao diện)
+    if (key === 'open' && !license.view().lifetime) throw new Error('Cần kích hoạt gói VĨNH VIỄN để mở ứng dụng.');
     const l = await updater.links();
     const url = l[key];
-    if (!url) throw new Error(key === 'open' ? 'Chưa có link mở ứng dụng. Liên hệ người bán.' : 'Chưa có đường dẫn này.');
-    if (key === 'open') return openInChrome(url);
+    if (!url) throw new Error(key === 'open' ? 'Chưa có link mở ứng dụng. Liên hệ người bán.'
+      : key === 'trial' ? 'Chưa có link dùng thử. Liên hệ người bán.' : 'Chưa có đường dẫn này.');
+    if (key === 'open' || key === 'trial') return openInChrome(url);
     return openExternal(url);
   });
 

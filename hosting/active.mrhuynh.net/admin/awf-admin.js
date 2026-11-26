@@ -37,7 +37,8 @@
   TABS.awf = [['w_stats', 'Tổng quan'], ['w_installs', 'Máy đã cài'], ['w_links', 'Liên kết & video'], ['w_orders', 'Đơn hàng'], ['w_release', 'Phát hành & cập nhật'], ['w_events', 'Nhật ký']];
 
   const LINKS = [
-    ['open', 'Nút “Mở ứng dụng” (mở bằng Chrome)', 'https://flow.google.com/project/…/tool/…'],
+    ['open', 'Nút “Mở ứng dụng” – CHỈ khách đã kích hoạt VĨNH VIỄN (mở bằng Chrome)', 'https://flow.google.com/project/…/tool/…'],
+    ['trial', 'Nút “Dùng thử” – ai cũng mở được (mở bằng Chrome)', 'https://…'],
     ['guide', 'Nút “Xem video hướng dẫn” (YouTube)', 'https://www.youtube.com/watch?v=…'],
     ['tools', 'Nút “Khám phá tiện ích AI khác”', 'https://mrhuynh.net/tools'],
     ['zalo', 'Zalo', 'https://zalo.me/0979007367'],
