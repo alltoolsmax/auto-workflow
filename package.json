@@ -1,7 +1,7 @@
 {
   "name": "auto-workflow",
   "productName": "Auto WorkFlow Mr. Huỳnh",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Auto WorkFlow - Mr. Huỳnh: mở công cụ WorkFlow Automation, dùng thử miễn phí, mua gói VĨNH VIỄN bằng QR",
   "main": "src/main/main.js",
   "author": "Mr. Huỳnh",

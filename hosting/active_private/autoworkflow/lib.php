@@ -146,7 +146,7 @@ function db(): PDO
         $pdo->exec('UPDATE plans SET active=0');
         $up = $pdo->prepare('INSERT INTO plans (code, name, days, price, sort, badge, active) VALUES (?,?,?,?,?,?,1)
             ON CONFLICT(code) DO UPDATE SET name=excluded.name, days=excluded.days, price=excluded.price, sort=excluded.sort, badge=excluded.badge, active=1');
-        $up->execute(['life', 'VĨNH VIỄN', 0, (int)(cfg()['plans']['life']['price'] ?? 599000), 1, 'Mua 1 lần, dùng mãi mãi']);
+        $up->execute(['life', 'VĨNH VIỄN', 0, (int)(cfg()['plans']['life']['price'] ?? 299000), 1, 'Mua 1 lần, dùng mãi mãi']);
         $pdo->exec("INSERT OR REPLACE INTO counters (k, n) VALUES ('plans_awf1', 1)");
     }
     if ((int)$pdo->query('SELECT COUNT(*) FROM plans')->fetchColumn() === 0) {

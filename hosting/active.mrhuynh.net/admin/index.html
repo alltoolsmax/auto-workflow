@@ -325,7 +325,7 @@ async function act(a,key){let body={key};
   const ago = (t) => { const x = Date.now() / 1000 - t; return x < 120 ? 'vừa xong' : x < 3600 ? Math.floor(x / 60) + ' phút trước' : x < 86400 ? Math.floor(x / 3600) + ' giờ trước' : Math.floor(x / 86400) + ' ngày trước'; };
   const mb = (n) => (n ? (n / 1048576).toFixed(1) + ' MB' : '');
 
-  TABS.awf = [['w_stats', 'Tổng quan'], ['w_installs', 'Máy đã cài'], ['w_links', 'Liên kết & video'], ['w_orders', 'Đơn hàng'], ['w_release', 'Phát hành & cập nhật'], ['w_events', 'Nhật ký']];
+  TABS.awf = [['w_stats', 'Tổng quan'], ['w_installs', 'Máy đã cài'], ['w_keys', 'Danh sách key'], ['w_create', 'Tạo key'], ['w_links', 'Liên kết & video'], ['w_orders', 'Đơn hàng'], ['w_release', 'Phát hành & cập nhật'], ['w_events', 'Nhật ký']];
 
   const LINKS = [
     ['open', 'Nút “Mở ứng dụng” (mở bằng Chrome)', 'https://flow.google.com/project/…/tool/…'],
@@ -337,7 +337,45 @@ async function act(a,key){let body={key};
     ['facebook', 'Facebook', 'https://facebook.com/…'],
   ];
 
+  // Quản lý key + tạo key (giống Video AI / Max AI). Key VĨNH VIỄN: Số ngày 0 = vĩnh viễn.
+  let WPLANS = [];
+  const wPlanName = (c) => (WPLANS.find((p) => p.code == c) || {}).name || c;
+  window.wact = async function (a, key) {
+    const body = { key };
+    if (a == 'extend') { const n = prompt('Cộng thêm bao nhiêu ngày? (số âm để trừ; key vĩnh viễn không cần)', '30'); if (n === null) return; body.days = n; }
+    if (a == 'note') { const c = prompt('Tên khách / SĐT / Zalo:'); if (c === null) return; body.customer = c; body.note = prompt('Ghi chú:') || ''; }
+    if (a == 'revoke' && !confirm('Khóa key ' + key + '? Phần mềm của khách sẽ về chế độ dùng thử ở lần kiểm tra tới.')) return;
+    if (a == 'reset_machine' && !confirm('Gỡ key khỏi máy hiện tại để khách kích hoạt trên máy mới?')) return;
+    const j = await AW(a, body); if (j.ok) { toast('Đã cập nhật'); R.w_keysLoad(); }
+  };
+
   Object.assign(R, {
+    async w_keys(m) {
+      WPLANS = (await AW('plans')).plans || [];
+      m.innerHTML = `<div class="row"><input id="wq" placeholder="Tìm key, tên khách, SĐT, mã máy…" style="flex:1" onkeydown="if(event.key=='Enter')R.w_keysLoad()"><button class="g" onclick="R.w_keysLoad()">Tìm</button></div><div id="wkt"></div>`;
+      R.w_keysLoad();
+    },
+    async w_keysLoad() {
+      const j = await AW('keys', null, '&q=' + encodeURIComponent($('#wq').value || ''));
+      $('#wkt').innerHTML = `<table><tr><th>Key</th><th>Gói</th><th>Trạng thái</th><th>Hết hạn</th><th>Khách</th><th>Máy</th><th>Tạo</th><th></th></tr>` +
+        (j.keys || []).map((k) => `<tr><td class="k">${esc(k.key)}</td><td>${esc(wPlanName(k.plan))}${k.status == 'new' && +k.days ? ` <span class="mu">(${k.days} ngày)</span>` : ''}<div class="mu">${fmt(+k.price)}</div></td>
+        <td>${kstatus(k, j.now)}</td><td>${k.status == 'new' ? '' : (+k.expires_at === 0 ? '<b>Vĩnh viễn</b>' : d(+k.expires_at))}</td>
+        <td>${esc(k.customer || '')}<div class="mu">${esc(k.note || '')}</div></td><td class="mono mu" title="${esc(k.machine || '')}">${esc((k.machine || '').slice(0, 10))}</td><td class="mu">${d(+k.created_at)}</td>
+        <td class="acts"><button class="g" onclick="wact('note','${k.key}')">Ghi chú</button><button class="g" onclick="wact('reset_machine','${k.key}')">Đổi máy</button>${+k.days || (+k.expires_at > 0) ? `<button class="g" onclick="wact('extend','${k.key}')">+ ngày</button>` : ''}
+        ${k.status == 'revoked' ? `<button class="g" onclick="wact('unrevoke','${k.key}')">Mở khóa</button>` : `<button class="r" onclick="wact('revoke','${k.key}')">Khóa</button>`}
+        <button class="g" onclick="copy('${k.key}')">Chép</button></td></tr>`).join('') + '</table>';
+    },
+    async w_create(m) {
+      WPLANS = (await AW('plans')).plans || [];
+      m.innerHTML = `<div class="row"><label>Gói<select id="wcp">${WPLANS.map((p) => `<option value="${p.code}">${esc(p.name)} — ${fmt(+p.price)}</option>`).join('')}</select></label>
+        <label>Số lượng<input id="wcn" type="number" value="1" min="1" max="200" style="width:90px"></label>
+        <label>Số ngày (0 = vĩnh viễn, trống = theo gói)<input id="wcd" type="number" style="width:220px"></label><label>Giá bán (trống = theo gói)<input id="wcpr" type="number" style="width:160px"></label></div>
+        <div class="row"><label style="flex:1">Tên khách / SĐT / Zalo<input id="wcc"></label><label style="flex:1">Ghi chú<input id="wcno"></label><button onclick="R.w_make()">Tạo key Auto WorkFlow</button></div><pre id="wmade" class="made k" style="display:none"></pre>`;
+    },
+    async w_make() {
+      const j = await AW('create', { plan: $('#wcp').value, count: $('#wcn').value, days: $('#wcd').value, price: $('#wcpr').value, customer: $('#wcc').value, note: $('#wcno').value });
+      if (j.ok) { const e = $('#wmade'); e.style.display = 'block'; e.textContent = j.keys.join('\n'); copy(j.keys.join('\n')); toast('Đã tạo ' + j.keys.length + ' key (đã chép)'); }
+    },
     async w_stats(m) {
       const [s, ins] = await Promise.all([AW('stats'), AW('installs').catch(() => null)]);
       const st = (ins && ins.ok && ins.stats) || {};

@@ -15,7 +15,7 @@ return [
 
     // Bảng giá: 1 gói VĨNH VIỄN (days 0). Dùng thử miễn phí nằm trong app. Sửa giá ở trang quản trị.
     'plans' => [
-        'life' => ['name' => 'VĨNH VIỄN', 'days' => 0, 'price' => 599000, 'badge' => 'Mua 1 lần, dùng mãi mãi'],
+        'life' => ['name' => 'VĨNH VIỄN', 'days' => 0, 'price' => 299000, 'badge' => 'Mua 1 lần, dùng mãi mãi'],
     ],
 
     'contact_zalo'  => 'https://zalo.me/0979007367',
