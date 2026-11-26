@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' https: data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'">
+<title>Auto WorkFlow Mr. Huỳnh</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="win">
+  <div class="bg-grid"></div><div class="bg-glow"></div>
+
+  <header class="topbar">
+    <div class="brand-mini"><img src="../../assets/icon.png" alt="Logo"><span>Auto WorkFlow Mr. Huỳnh</span></div>
+    <button class="chip-gradient" data-link="tools">✦ Khám phá tiện ích AI khác ↗</button>
+  </header>
+
+  <div id="updateBanner" class="update-banner" hidden>
+    <span id="updateText"></span>
+    <button id="updateBtn" class="btn-mini">Cập nhật &amp; khởi động lại</button>
+  </div>
+
+  <main class="hero">
+    <section class="left">
+      <div class="ready"><span class="dot"></span>WorkFlow đã sẵn sàng</div>
+      <div class="brand">
+        <img class="logo" src="../../assets/icon.png" alt="Logo">
+        <div>
+          <div class="kicker">WORKFLOW AUTOMATION</div>
+          <h1>Auto WorkFlow<br><span class="grad">Mr. Huỳnh</span></h1>
+        </div>
+      </div>
+      <p class="desc">Nối ảnh, AI Agent và video thành một dây chuyền tự chạy. Kéo node, nối dây, đặt prompt, rồi để WorkFlow chạy từ node đầu đến node cuối.</p>
+      <div class="actions">
+        <button id="openBtn" class="btn-primary sheen">▶ Mở ứng dụng</button>
+        <button id="guideBtn" class="btn-yt"><span class="yt-icon"><i></i></span>Xem video hướng dẫn</button>
+      </div>
+      <button id="trialCard" class="trial-card chip-hover">
+        <span class="trial-text">
+          <span id="tcKicker" class="tc-kicker">DÙNG THỬ</span>
+          <span id="tcTitle" class="tc-title">Miễn phí · đầy đủ tính năng</span>
+          <span id="tcNote" class="tc-note">Bấm để mở ứng dụng ngay, không cần thanh toán</span>
+        </span>
+        <span id="tcBtn" class="tc-btn">Dùng thử ▶</span>
+      </button>
+    </section>
+
+    <section class="right" aria-hidden="true">
+      <svg viewBox="0 0 400 330" class="graph">
+        <defs><linearGradient id="awg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5b8cff"/><stop offset="1" stop-color="#ec4899"/></linearGradient></defs>
+        <g fill="none" stroke="url(#awg)" stroke-width="2" stroke-linecap="round">
+          <path class="wire" d="M120 54 C150 54 115 154 145 154"/>
+          <path class="wire" d="M255 154 C285 154 250 54 280 54"/>
+          <path class="wire" d="M255 154 C285 154 250 264 280 264"/>
+        </g>
+        <circle r="5" fill="#fff"><animateMotion dur="2.4s" repeatCount="indefinite" path="M120 54 C150 54 115 154 145 154"/></circle>
+        <circle r="5" fill="#fff" visibility="hidden"><set attributeName="visibility" to="visible" begin="1.2s"/><animateMotion dur="2.4s" begin="1.2s" repeatCount="indefinite" path="M255 154 C285 154 250 54 280 54"/></circle>
+        <circle r="5" fill="#fff" visibility="hidden"><set attributeName="visibility" to="visible" begin="1.6s"/><animateMotion dur="2.4s" begin="1.6s" repeatCount="indefinite" path="M255 154 C285 154 250 264 280 264"/></circle>
+        <g class="gnodes">
+          <g class="node"><rect x="10" y="30" width="110" height="48" rx="12" stroke="#5b8cff"/><circle cx="26" cy="54" r="5" fill="#5b8cff"/><text x="40" y="59">Ảnh nguồn</text></g>
+          <g class="node" style="animation-delay:.8s"><rect x="145" y="130" width="110" height="48" rx="12" stroke="#8b5cf6"/><circle cx="161" cy="154" r="5" fill="#8b5cf6"/><text x="175" y="159">AI Agent</text></g>
+          <g class="node" style="animation-delay:1.6s"><rect x="280" y="30" width="110" height="48" rx="12" stroke="#ec4899"/><circle cx="296" cy="54" r="5" fill="#ec4899"/><text x="310" y="59">Tạo ảnh</text></g>
+          <g class="node" style="animation-delay:2.2s"><rect x="280" y="240" width="110" height="48" rx="12" stroke="#22C55E"/><circle cx="296" cy="264" r="5" fill="#22C55E"/><text x="310" y="269">Tạo video</text></g>
+        </g>
+      </svg>
+      <div class="hi-wrap">
+        <div class="hi" style="animation-delay:0s">Nối node bằng dây — dữ liệu tự chạy từ đầu đến cuối</div>
+        <div class="hi" style="animation-delay:3s">AI Agent phân tích ảnh rồi viết prompt giúp bạn</div>
+        <div class="hi" style="animation-delay:6s">Tạo ảnh và video hàng loạt, một lần bấm</div>
+        <div class="hi" style="animation-delay:9s">Nhập / xuất workflow JSON, dùng lại mọi lúc</div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <div class="about"><b>Mr. Huỳnh</b> · Huỳnh Xuyên Sơn<br>© 2026 · Phiên bản <span id="ver">v1.0.0</span></div>
+    <div class="contacts">
+      <button class="contact chip-hover" data-link="zalo"><i class="ico" style="background:#0068FF">Z</i>Zalo</button>
+      <button class="contact chip-hover" data-link="email"><i class="ico" style="background:#EA580C">@</i>Email</button>
+      <button class="contact chip-hover" data-link="website"><i class="ico" style="background:#10B981">◎</i>Website</button>
+      <button class="contact chip-hover" data-link="facebook"><i class="ico" style="background:#1877F2">f</i>Facebook</button>
+    </div>
+  </footer>
+
+  <div id="toast" class="toast" hidden></div>
+  <div id="modalRoot"></div>
+</div>
+<script src="app.js"></script>
+</body>
+</html>
