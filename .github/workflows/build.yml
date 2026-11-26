@@ -60,7 +60,14 @@ jobs:
         env:
           CSC_IDENTITY_AUTO_DISCOVERY: "false"
         run: |
-          npx electron-builder --mac dmg --x64 --arm64 --publish never
+          # Đóng gói lần lượt từng loại chip, lỗi tạm "hdiutil: Resource busy" thì thử lại (tối đa 3 lần)
+          for ARCH in x64 arm64; do
+            for TRY in 1 2 3; do
+              npx electron-builder --mac dmg --$ARCH --publish never && break
+              [ $TRY = 3 ] && exit 1
+              echo "Đóng gói $ARCH lỗi, thử lại lần $((TRY+1))…"; hdiutil info | grep -o '/dev/disk[0-9]*' | sort -u | xargs -n1 hdiutil detach -force 2>/dev/null; sleep 15
+            done
+          done
           for APP in dist/mac/*.app dist/mac-arm64/*.app; do codesign --verify --deep --strict "$APP"; done
           node tools/make-downloads.js mac
       - name: Đưa lên Releases
