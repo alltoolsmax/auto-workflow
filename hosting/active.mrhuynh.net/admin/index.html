@@ -12,7 +12,7 @@ button{cursor:pointer;background:linear-gradient(135deg,var(--ac),#ff6a00);borde
 button.g{background:var(--sf2);border:1px solid var(--bd);font-weight:500}button.r{background:#4a1520;border:1px solid #7a2333}
 button:hover{filter:brightness(1.12)}
 .prod{display:flex;gap:6px}.prod button{background:var(--sf2);border:1px solid var(--bd);font-weight:700}
-.prod button.on.video{background:#0e4f63;border-color:var(--vid)}.prod button.on.voice{background:#43206a;border-color:var(--voi)}.prod button.on.gcloud{background:#0b4d3a;border-color:#10b981}.prod button.on.maxai{background:#3b2470;border-color:#8b5cf6}.prod button.on.awf{background:#5a3410;border-color:var(--ac)}
+.prod button.on.video{background:#0e4f63;border-color:var(--vid)}.prod button.on.voice{background:#43206a;border-color:var(--voi)}.prod button.on.gcloud{background:#0b4d3a;border-color:#10b981}.prod button.on.maxai{background:#3b2470;border-color:#8b5cf6}.prod button.on.awf{background:#5a3410;border-color:var(--ac)}.prod button.on.af{background:#123a6b;border-color:#38bdf8}
 nav{display:flex;gap:6px;padding:12px 22px 0;flex-wrap:wrap}nav a{padding:9px 15px;border-radius:8px 8px 0 0;color:var(--mu);cursor:pointer;text-decoration:none}
 nav a.on{background:var(--sf);color:var(--tx);box-shadow:inset 0 2px 0 var(--ac)}
 main{background:var(--sf);margin:0 22px 22px;border-radius:0 10px 10px 10px;padding:20px;min-height:60vh;overflow:auto}
@@ -28,11 +28,11 @@ pre.made{background:#050819;padding:14px;border-radius:8px;border:1px solid var(
 .acts button{padding:4px 9px;font-size:12px;margin:1px}
 #toast{position:fixed;right:20px;bottom:20px;background:var(--sf2);border:1px solid var(--bd);padding:12px 16px;border-radius:8px;display:none;max-width:420px}
 </style></head><body>
-<div id="login"><h2 style="margin:0 0 4px">Quản trị bản quyền</h2><div class="mu">Video AI · Voice AI · GCloud Hub · Max AI · Auto WorkFlow · Mr. Huỳnh</div>
+<div id="login"><h2 style="margin:0 0 4px">Quản trị bản quyền</h2><div class="mu">Video AI · Voice AI · GCloud Hub · Max AI · Auto WorkFlow · Auto Flow · Mr. Huỳnh</div>
 <input id="tok" type="password" placeholder="Mật khẩu quản trị" onkeydown="if(event.key=='Enter')login()"><button onclick="login()" style="width:100%">Đăng nhập</button><div id="lerr" style="color:var(--bad);margin-top:10px"></div></div>
 <div id="app" style="display:none">
 <header><h1>🔑 Bản quyền · Mr. Huỳnh</h1>
-<div class="prod"><button id="pv" class="video" onclick="setProd('video')">🎬 Video AI</button><button id="po" class="voice" onclick="setProd('voice')">🎙 Voice AI</button><button id="pg" class="gcloud" onclick="setProd('gcloud')">☁ GCloud Hub</button><button id="pm" class="maxai" onclick="setProd('maxai')">⚡ Max AI</button><button id="pa" class="awf" onclick="setProd('awf')">🔀 Auto WorkFlow</button></div>
+<div class="prod"><button id="pv" class="video" onclick="setProd('video')">🎬 Video AI</button><button id="po" class="voice" onclick="setProd('voice')">🎙 Voice AI</button><button id="pg" class="gcloud" onclick="setProd('gcloud')">☁ GCloud Hub</button><button id="pm" class="maxai" onclick="setProd('maxai')">⚡ Max AI</button><button id="pa" class="awf" onclick="setProd('awf')">🔀 Auto WorkFlow</button><button id="pf" class="af" onclick="setProd('af')">▶ Auto Flow</button></div>
 <span class="sp"></span><button class="g" onclick="logout()">Đăng xuất</button></header>
 <nav id="nav"></nav><main id="main"></main></div>
 <div id="toast"></div>
@@ -45,8 +45,8 @@ const dt=t=>t?new Date(t*1000).toLocaleString('vi-VN'):'';const d=t=>t?new Date(
 function toast(m){const e=$('#toast');e.textContent=m;e.style.display='block';clearTimeout(e._t);e._t=setTimeout(()=>e.style.display='none',3200)}
 // Max AI dùng lại các trang của Video AI: lệnh tự thêm tiền tố m_ (m_keys, m_create…) → admin/maxai_api.php
 const MX=a=>PROD=='maxai'&&a!='info'&&!/^(v_|g_|m_)/.test(a)?'m_'+a:a;const PN=()=>PROD=='maxai'?'Max Video AI':'Video AI';let MINFO={};
-// Auto WorkFlow: lệnh w_… → admin/awf.php (module riêng, không đụng api.php)
-async function api(a,body,qs=''){const r=await fetch((/^w_/.test(a)?'awf.php?a='+a:'api.php?a='+MX(a))+qs,{method:body?'POST':'GET',headers:{'x-admin-token':T,'content-type':'application/json'},body:body?JSON.stringify(body):undefined});
+// Auto WorkFlow: lệnh w_… → admin/awf.php · Auto Flow: lệnh f_… → admin/af.php (module riêng, không đụng api.php)
+async function api(a,body,qs=''){const r=await fetch((/^w_/.test(a)?'awf.php?a='+a:/^f_/.test(a)?'af.php?a='+a:'api.php?a='+MX(a))+qs,{method:body?'POST':'GET',headers:{'x-admin-token':T,'content-type':'application/json'},body:body?JSON.stringify(body):undefined});
  let j;try{j=await r.json()}catch(e){j={ok:false,message:'Máy chủ trả về lỗi '+r.status}}
  if(r.status==401){logout();throw j}if(!j.ok)toast(j.message||'Lỗi');return j}
 async function login(){T=$('#tok').value.trim();try{const j=await api('info');if(!j.ok)throw j;try{sessionStorage.setItem('adm',T)}catch(e){};show(j)}catch(e){$('#lerr').textContent=(e&&e.message)||'Sai mật khẩu'}}
@@ -61,9 +61,9 @@ const MAX_GUIDE_PAGES=[['engine','Engine & mô hình (cài, tải mô hình)'],[
 const GP=()=>PROD=='maxai'?MAX_GUIDE_PAGES:GUIDE_PAGES;
 const GUIDE_PAGES=[['flow_image','Tạo ảnh Flow'],['flow_video','Tạo Video Flow'],['gpt_image','Tạo ảnh GPT'],['grok_image','Tạo ảnh Grok'],['muse_image','Tạo ảnh Muse'],['dreamina','Tạo Video Dreamina'],['meta_muse','Tạo Video Muse'],['meta_vibes','Tạo Video Meta Vibes'],['grok_video','Tạo Video Grok'],['refs','Kho ảnh tham chiếu'],['workflow','Workflow'],['upscale','Nâng Cấp Ảnh'],['video_tools','Công Cụ Video'],['logs','Log Chi Tiết']];
 let cur='stats',PLANS=[];
-function setProd(p){PROD=p;try{localStorage.setItem('prod',p)}catch(e){};$('#pv').classList.toggle('on',p=='video');$('#po').classList.toggle('on',p=='voice');$('#pg').classList.toggle('on',p=='gcloud');$('#pm').classList.toggle('on',p=='maxai');$('#pa').classList.toggle('on',p=='awf');if(p=='maxai')api('m_info').then(j=>{MINFO=j||{}}).catch(()=>{});go(TABS[p][0][0])}
+function setProd(p){PROD=p;try{localStorage.setItem('prod',p)}catch(e){};$('#pv').classList.toggle('on',p=='video');$('#po').classList.toggle('on',p=='voice');$('#pg').classList.toggle('on',p=='gcloud');$('#pm').classList.toggle('on',p=='maxai');$('#pa').classList.toggle('on',p=='awf');$('#pf').classList.toggle('on',p=='af');if(p=='maxai')api('m_info').then(j=>{MINFO=j||{}}).catch(()=>{});go(TABS[p][0][0])}
 async function go(t){cur=t;$('#nav').innerHTML=TABS[PROD].map(([k,n])=>`<a class="${k==t?'on':''}" onclick="go('${k}')">${n}</a>`).join('');
- const m=$('#main');m.innerHTML='<span class="mu">Đang tải…</span>';PLANS=(PROD=='gcloud'||PROD=='awf')?[]:((await api(PROD=='voice'?'v_plans':'plans')).plans||[]).filter(p=>PROD!='maxai'||+p.active);await R[t](m)}
+ const m=$('#main');m.innerHTML='<span class="mu">Đang tải…</span>';PLANS=(PROD=='gcloud'||PROD=='awf'||PROD=='af')?[]:((await api(PROD=='voice'?'v_plans':'plans')).plans||[]).filter(p=>PROD!='maxai'||+p.active);await R[t](m)}
 const planName=c=>(PLANS.find(p=>p.code==c)||{}).name||c;
 function kstatus(k,now){if(k.status=='active'&&k.expires_at&&k.expires_at<now)return'<span class="tag t-exp">hết hạn</span>';
  return`<span class="tag t-${k.status}">${{new:'chưa dùng',active:'đang dùng',revoked:'đã khóa',merged:'đã gia hạn'}[k.status]}</span>`}
@@ -479,6 +479,171 @@ async function act(a,key){let body={key};
 
     async w_events(m) {
       const j = await AW('events');
+      m.innerHTML = `<table><tr><th>Lúc</th><th>Việc</th><th>Key</th><th>Máy</th><th>Chi tiết</th></tr>` +
+        (j.events || []).map((e) => `<tr><td class="mu">${dt(+e.at)}</td><td>${esc(e.kind)}</td><td class="k">${esc(e.key || '')}</td><td class="mono mu">${esc((e.machine || '').slice(0, 19))}</td><td>${esc(e.detail || '')}</td></tr>`).join('') + '</table>';
+    },
+  });
+})();
+// ---------------- AUTO FLOW (key VĨNH VIỄN, thanh toán QR; dữ liệu ở active_private/autoflow)
+(function () {
+  const AF = (a, body, qs) => api('f_' + a, body, qs);
+  const ago = (t) => { const x = Date.now() / 1000 - t; return x < 120 ? 'vừa xong' : x < 3600 ? Math.floor(x / 60) + ' phút trước' : x < 86400 ? Math.floor(x / 3600) + ' giờ trước' : Math.floor(x / 86400) + ' ngày trước'; };
+  const mb = (n) => (n ? (n / 1048576).toFixed(1) + ' MB' : '');
+
+  TABS.af = [['f_stats', 'Tổng quan'], ['f_installs', 'Máy đã cài'], ['f_keys', 'Danh sách key'], ['f_create', 'Tạo key'], ['f_links', 'Liên kết & video'], ['f_orders', 'Đơn hàng'], ['f_release', 'Phát hành & cập nhật'], ['f_events', 'Nhật ký']];
+
+  const LINKS = [
+    ['open', 'Nút “Mở ứng dụng” – CHỈ khách đã kích hoạt VĨNH VIỄN (mở bằng Chrome)', 'https://flow.google.com/project/…/tool/…'],
+    ['library', 'Nút “Thư viện Prompt” – ai cũng mở được (mở bằng trình duyệt mặc định)', 'https://…'],
+    ['free', 'Nút “Dùng miễn phí” – ai cũng mở được (mở bằng trình duyệt mặc định)', 'https://…'],
+    ['guide', 'Nút “Xem video hướng dẫn” (YouTube)', 'https://www.youtube.com/watch?v=…'],
+    ['tools', 'Nút “Khám phá tiện ích AI khác”', 'https://mrhuynh.net/tools'],
+    ['zalo', 'Zalo', 'https://zalo.me/0979007367'],
+    ['email', 'Email (dạng mailto:)', 'mailto:info@mrhuynh.net'],
+    ['website', 'Website', 'https://mrhuynh.net'],
+    ['facebook', 'Facebook', 'https://facebook.com/…'],
+  ];
+
+  // Quản lý key + tạo key (giống Video AI / Max AI). Key VĨNH VIỄN: Số ngày 0 = vĩnh viễn.
+  let FPLANS = [];
+  const wPlanName = (c) => (FPLANS.find((p) => p.code == c) || {}).name || c;
+  window.fact = async function (a, key) {
+    const body = { key };
+    if (a == 'extend') { const n = prompt('Cộng thêm bao nhiêu ngày? (số âm để trừ; key vĩnh viễn không cần)', '30'); if (n === null) return; body.days = n; }
+    if (a == 'note') { const c = prompt('Tên khách / SĐT / Zalo:'); if (c === null) return; body.customer = c; body.note = prompt('Ghi chú:') || ''; }
+    if (a == 'revoke' && !confirm('Khóa key ' + key + '? Phần mềm của khách sẽ về chế độ dùng thử ở lần kiểm tra tới.')) return;
+    if (a == 'reset_machine' && !confirm('Gỡ key khỏi máy hiện tại để khách kích hoạt trên máy mới?')) return;
+    const j = await AF(a, body); if (j.ok) { toast('Đã cập nhật'); R.f_keysLoad(); }
+  };
+
+  Object.assign(R, {
+    async f_keys(m) {
+      FPLANS = (await AF('plans')).plans || [];
+      m.innerHTML = `<div class="row"><input id="fq" placeholder="Tìm key, tên khách, SĐT, mã máy…" style="flex:1" onkeydown="if(event.key=='Enter')R.f_keysLoad()"><button class="g" onclick="R.f_keysLoad()">Tìm</button></div><div id="fkt"></div>`;
+      R.f_keysLoad();
+    },
+    async f_keysLoad() {
+      const j = await AF('keys', null, '&q=' + encodeURIComponent($('#fq').value || ''));
+      $('#fkt').innerHTML = `<table><tr><th>Key</th><th>Gói</th><th>Trạng thái</th><th>Hết hạn</th><th>Khách</th><th>Máy</th><th>Tạo</th><th></th></tr>` +
+        (j.keys || []).map((k) => `<tr><td class="k">${esc(k.key)}</td><td>${esc(wPlanName(k.plan))}${k.status == 'new' && +k.days ? ` <span class="mu">(${k.days} ngày)</span>` : ''}<div class="mu">${fmt(+k.price)}</div></td>
+        <td>${kstatus(k, j.now)}</td><td>${k.status == 'new' ? '' : (+k.expires_at === 0 ? '<b>Vĩnh viễn</b>' : d(+k.expires_at))}</td>
+        <td>${esc(k.customer || '')}<div class="mu">${esc(k.note || '')}</div></td><td class="mono mu" title="${esc(k.machine || '')}">${esc((k.machine || '').slice(0, 10))}</td><td class="mu">${d(+k.created_at)}</td>
+        <td class="acts"><button class="g" onclick="fact('note','${k.key}')">Ghi chú</button><button class="g" onclick="fact('reset_machine','${k.key}')">Đổi máy</button>${+k.days || (+k.expires_at > 0) ? `<button class="g" onclick="fact('extend','${k.key}')">+ ngày</button>` : ''}
+        ${k.status == 'revoked' ? `<button class="g" onclick="fact('unrevoke','${k.key}')">Mở khóa</button>` : `<button class="r" onclick="fact('revoke','${k.key}')">Khóa</button>`}
+        <button class="g" onclick="copy('${k.key}')">Chép</button></td></tr>`).join('') + '</table>';
+    },
+    async f_create(m) {
+      FPLANS = ((await AF('plans')).plans || []).filter((p) => +p.active);   // chỉ gói đang bán (VĨNH VIỄN)
+      m.innerHTML = `<div class="row"><label>Gói<select id="fcp">${FPLANS.map((p) => `<option value="${p.code}">${esc(p.name)} — ${fmt(+p.price)}</option>`).join('')}</select></label>
+        <label>Số lượng<input id="fcn" type="number" value="1" min="1" max="200" style="width:90px"></label>
+        <label>Số ngày (0 = vĩnh viễn, trống = theo gói)<input id="fcd" type="number" style="width:220px"></label><label>Giá bán (trống = theo gói)<input id="fcpr" type="number" style="width:160px"></label></div>
+        <div class="row"><label style="flex:1">Tên khách / SĐT / Zalo<input id="fcc"></label><label style="flex:1">Ghi chú<input id="fcno"></label><button onclick="R.f_make()">Tạo key Auto Flow</button></div><pre id="fmade" class="made k" style="display:none"></pre>`;
+    },
+    async f_make() {
+      const j = await AF('create', { plan: $('#fcp').value, count: $('#fcn').value, days: $('#fcd').value, price: $('#fcpr').value, customer: $('#fcc').value, note: $('#fcno').value });
+      if (j.ok) { const e = $('#fmade'); e.style.display = 'block'; e.textContent = j.keys.join('\n'); copy(j.keys.join('\n')); toast('Đã tạo ' + j.keys.length + ' key (đã chép)'); }
+    },
+    async f_stats(m) {
+      const [s, ins] = await Promise.all([AF('stats'), AF('installs').catch(() => null)]);
+      const st = (ins && ins.ok && ins.stats) || {};
+      m.innerHTML = `<div class="cards">
+        <div class="card"><span>Tổng máy đã cài</span><b>${st.total ?? '—'}</b></div>
+        <div class="card"><span>Đang mở (35 phút)</span><b>${st.online ?? '—'}</b></div>
+        <div class="card"><span>Hoạt động 24 giờ</span><b>${st.active_24h ?? '—'}</b></div>
+        <div class="card"><span>Dùng trong 30 ngày</span><b>${st.used_30d ?? '—'}</b></div>
+        <div class="card"><span>Máy mới (7 ngày)</span><b>${st.new_7d ?? '—'}</b></div>
+        <div class="card"><span>VĨNH VIỄN / Dùng thử (30 ngày)</span><b>${st.pro_30d ?? 0} / ${st.free_30d ?? 0}</b></div>
+        <div class="card"><span>Windows / macOS (30 ngày)</span><b>${st.win_30d ?? 0} / ${st.mac_30d ?? 0}</b></div>
+        <div class="card"><span>Bản đang phát hành</span><b style="font-size:18px">${[st.release_win && 'Win v' + esc(st.release_win), st.release_mac && 'Mac v' + esc(st.release_mac)].filter(Boolean).join(' · ') || '—'}</b></div></div>
+        <div class="cards" style="margin-top:14px">
+        <div class="card"><span>Key VĨNH VIỄN đang dùng</span><b>${s.active}</b></div>
+        <div class="card"><span>Đơn chờ chuyển khoản</span><b>${s.pending}</b></div>
+        <div class="card"><span>Đơn thiếu tiền / cần xem</span><b style="color:${s.review ? 'var(--warn)' : ''}">${s.review}</b></div>
+        <div class="card"><span>Doanh thu hôm nay</span><b>${fmt(s.revenue_today)}</b></div>
+        <div class="card"><span>Doanh thu 30 ngày</span><b>${fmt(s.revenue_30d)}</b></div>
+        <div class="card"><span>Tổng doanh thu</span><b>${fmt(s.revenue_all)}</b></div></div>
+        <p class="mu">Máy đang mở = phần mềm báo về trong 35 phút gần nhất. App chỉ gửi mã máy đã băm, phiên bản và hệ điều hành.</p>`;
+    },
+
+    async f_installs(m) {
+      const j = await AF('installs', { limit: 300 });
+      const L = j.list || [];
+      m.innerHTML = `<div class="row"><label style="flex:1">Tìm máy<input id="fq" placeholder="Mã máy hoặc key" oninput="R.wFilter()"></label>
+        <span class="mu" style="align-self:center">${j.stats ? j.stats.total : L.length} máy đã cài</span></div>
+        <table id="ftbl"><tr><th>Mã máy</th><th>Hệ điều hành</th><th>Phiên bản</th><th>Cài lần đầu</th><th>Hoạt động gần nhất</th><th>Gói</th><th>Key</th></tr>` +
+        L.map((x) => `<tr data-q="${esc((x.machine + ' ' + (x.key || '')).toLowerCase())}"><td class="mono">${esc(String(x.machine).slice(0, 12))}…</td>
+          <td>${x.os == 'mac' ? 'macOS' : 'Windows'}</td><td>${esc(x.version || '?')}</td><td class="mu">${d(+x.first_at)}</td>
+          <td class="mu">${ago(+x.last_at)}</td><td>${x.tier == 'pro' ? '<span class="tag t-paid">VĨNH VIỄN</span>' : '<span class="tag">Dùng thử</span>'}</td>
+          <td class="k">${esc(x.key || '')}</td></tr>`).join('') + '</table>';
+    },
+    wFilter() { const q = $('#fq').value.trim().toLowerCase(); document.querySelectorAll('#ftbl tr[data-q]').forEach((r) => { r.style.display = !q || r.dataset.q.includes(q) ? '' : 'none'; }); },
+
+    async f_links(m) {
+      const j = await AF('links');
+      m.innerHTML = `<div class="box"><h3>Tất cả liên kết trong ứng dụng</h3>
+        <p class="mu" style="margin-top:0">Sửa ở đây, app của khách tự nhận link mới ở lần mở sau (không cần cập nhật lại app). Link phải bắt đầu bằng https:// (email dạng mailto:). Để trống = ẩn / chưa đặt.</p>
+        <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 16px">` +
+        LINKS.map(([k, label, ph]) => `<label>${label}<input id="fl_${k}" value="${esc((j.links || {})[k] || '')}" placeholder="${esc(ph)}" style="width:100%;box-sizing:border-box"></label>`).join('') +
+        `</div></div>
+        <div class="box"><h3>Gói VĨNH VIỄN</h3><label>Giá (VNĐ)<input id="fl_price" value="${+j.price || ''}" style="width:160px"></label>
+        <p class="mu">Auto Flow chỉ bán 1 gói VĨNH VIỄN (mua 1 lần, dùng mãi mãi).</p></div>
+        <p><button onclick="R.wSaveLinks()">💾 Lưu tất cả</button></p>`;
+    },
+    async wSaveLinks() {
+      const links = {}; LINKS.forEach(([k]) => { links[k] = $('#fl_' + k).value.trim(); });
+      const j = await AF('links', { links, price: $('#fl_price').value.trim() });
+      if (j.ok) { toast('Đã lưu. App của khách sẽ nhận link mới ở lần mở sau.'); go('f_links'); }
+    },
+
+    async f_orders(m) {
+      const j = await AF('orders');
+      const tag = (s) => ({ paid: 't-paid', pending: '', review: 't-exp', expired: 't-revoked' }[s] || '');
+      m.innerHTML = `<table><tr><th>Lúc</th><th>Mã đơn</th><th>Gói</th><th>Số tiền</th><th>Trạng thái</th><th>Key</th><th></th></tr>` +
+        (j.orders || []).map((o) => `<tr><td class="mu">${dt(+o.created_at)}</td><td class="mono">${esc(o.code)}</td><td>${esc(o.plan)}</td><td>${fmt(+o.amount)}</td>
+          <td><span class="tag ${tag(o.status)}">${esc(o.status)}</span></td><td class="k">${esc(o.key || '')}</td>
+          <td class="acts">${o.status != 'paid' ? `<button class="g" onclick="paid('f_order_paid','${esc(o.code)}')">Xác nhận đã nhận tiền</button>` : `<button class="g" onclick="copy('${esc(o.key || '')}')">Chép key</button>`}</td></tr>`).join('') + '</table>' +
+        '<p class="mu">Tiền về đúng nội dung CK thì đơn tự chuyển "paid" và app của khách tự kích hoạt. Đơn chưa tự nhận (thiếu tiền, sai nội dung…) bấm "Xác nhận đã nhận tiền" — app đang mở sẽ tự kích hoạt, hoặc gửi key cho khách.</p>' +
+        (j.transactions && j.transactions.length ? '<h3 style="margin-top:18px">Giao dịch SePay gần đây</h3><table><tr><th>Lúc</th><th>Mã đơn</th><th>Số tiền</th><th>Nội dung</th><th>Kết quả</th></tr>' +
+          j.transactions.map((x) => `<tr><td class="mu">${dt(+x.created_at)}</td><td class="mono">${esc(x.code || '')}</td><td>${fmt(+x.amount)}</td><td class="mu">${esc(x.content || '')}</td><td>${esc(x.result || '')}</td></tr>`).join('') + '</table>' : '');
+    },
+
+    async f_release(m) {
+      const j = await AF('releases');
+      const L = (j.releases || []).find((r) => +r.id == j.latest_id);
+      const G = j.win_github || {}, M = j.mac_github || {};
+      const gh = 'https://github.com/' + esc(j.repo || 'alltoolsmax/auto-flow');
+      m.innerHTML = `<div class="box"><h3>Bản đang phát hành cho khách</h3>
+        <div><b>Windows:</b> ${L ? `<b style="font-size:18px">v${esc(L.version)}</b> <span class="mu">· ${dt(+L.created_at)} · ${mb(+L.size)}</span>${+L.mandatory ? ' <span class="tag t-exp">bắt buộc</span>' : ''}` : '<span class="mu">chưa phát hành bản nào</span>'}</div>
+        <div style="margin-top:10px"><b>macOS:</b> ${M.version ? `<b>v${esc(M.version)}</b> <span class="mu">· tự cập nhật thẳng từ GitHub</span>` : '<span class="mu">GitHub chưa có bản macOS</span>'}</div>
+        <div class="mu" style="margin-top:8px">Link cài lần đầu: Windows <span class="mono">${gh}/releases/latest/download/auto_flow_win.exe</span> · Mac chip Apple <span class="mono">${gh}/releases/latest/download/auto_flow_mac_apple.dmg</span> · Mac Intel <span class="mono">${gh}/releases/latest/download/auto_flow_mac_intel.dmg</span></div></div>
+        <div class="box"><h3>Phát hành bản Windows mới</h3>
+        <p class="mu" style="margin-top:0">GitHub tự build Windows + macOS khi bạn đẩy tag v&lt;phiên bản&gt;. Ghi những gì mới rồi bấm Phát hành. Khách Windows chỉ nhận bản mới sau khi bấm.</p>
+        <div class="row"><label>Số phiên bản<input id="frv" placeholder="1.0.0" style="width:120px" value="${esc(G.version || '')}"></label>
+        <label>Bắt buộc với bản thấp hơn (tùy chọn)<input id="frmin" placeholder="vd. 1.0.0" style="width:170px"></label>
+        <label style="flex-direction:row;align-items:center;gap:6px;color:var(--tx)"><input id="frman" type="checkbox"> Bắt buộc mọi người cập nhật</label></div>
+        <p class="mu">Bản GitHub đã build: ${G.version ? 'v' + esc(G.version) + ' · ' + mb(G.size) : '<b>chưa có</b>'}</p>
+        <label class="mu" style="display:block;margin-bottom:6px">Có gì mới (khách đọc trong hộp thoại cập nhật)</label><textarea id="frn" rows="5" style="width:100%" placeholder="- Thêm …&#10;- Sửa lỗi …"></textarea>
+        <p><button onclick="R.wPublish()">🚀 Phát hành</button></p></div>
+        <h3>Lịch sử phát hành (Windows)</h3><table><tr><th>Phiên bản</th><th>Lúc</th><th>Dung lượng</th><th>Ghi chú</th><th>Trạng thái</th><th></th></tr>` +
+        (j.releases || []).map((r) => `<tr><td><b>v${esc(r.version)}</b>${+r.id == j.latest_id ? ' <span class="tag t-active">đang phát</span>' : ''}</td><td class="mu">${dt(+r.created_at)}</td><td class="mu">${mb(+r.size)}</td>
+          <td style="white-space:pre-wrap;max-width:420px">${esc(r.notes || '')}</td><td>${+r.active ? '<span class="tag t-paid">bật</span>' : '<span class="tag t-revoked">đã ngừng</span>'}</td>
+          <td class="acts">${+r.active ? `<button class="r" onclick="R.wToggle(${r.id},0)">Ngừng phát</button>` : `<button class="g" onclick="R.wToggle(${r.id},1)">Phát lại</button>`}</td></tr>`).join('') + '</table>';
+    },
+    async wPublish() {
+      const v = $('#frv').value.trim();
+      if (!confirm('Phát hành Auto Flow bản ' + v + ' (Windows) cho tất cả khách?')) return;
+      toast('Đang kiểm tra bộ cài…');
+      const j = await AF('release_publish', { version: v, min_version: $('#frmin').value, mandatory: $('#frman').checked, notes: $('#frn').value, github: true });
+      if (j.ok) { toast('Đã phát hành v' + j.version + '. App của khách sẽ thấy trong vài phút.'); go('f_release'); }
+    },
+    async wToggle(id, on) {
+      if (!on && !confirm('Ngừng phát bản này? Khách sẽ nhận bản đang bật mới nhất còn lại.')) return;
+      const j = await AF('release_toggle', { id, active: on });
+      if (j.ok) go('f_release');
+    },
+
+    async f_events(m) {
+      const j = await AF('events');
       m.innerHTML = `<table><tr><th>Lúc</th><th>Việc</th><th>Key</th><th>Máy</th><th>Chi tiết</th></tr>` +
         (j.events || []).map((e) => `<tr><td class="mu">${dt(+e.at)}</td><td>${esc(e.kind)}</td><td class="k">${esc(e.key || '')}</td><td class="mono mu">${esc((e.machine || '').slice(0, 19))}</td><td>${esc(e.detail || '')}</td></tr>`).join('') + '</table>';
     },
