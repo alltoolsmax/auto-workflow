@@ -506,7 +506,7 @@ async function act(a,key){let body={key};
 
   // Quản lý key + tạo key (giống Video AI / Max AI). Key VĨNH VIỄN: Số ngày 0 = vĩnh viễn.
   let FPLANS = [];
-  const wPlanName = (c) => (FPLANS.find((p) => p.code == c) || {}).name || c;
+  const fPlanName = (c) => (FPLANS.find((p) => p.code == c) || {}).name || c;
   window.fact = async function (a, key) {
     const body = { key };
     if (a == 'extend') { const n = prompt('Cộng thêm bao nhiêu ngày? (số âm để trừ; key vĩnh viễn không cần)', '30'); if (n === null) return; body.days = n; }
@@ -525,7 +525,7 @@ async function act(a,key){let body={key};
     async f_keysLoad() {
       const j = await AF('keys', null, '&q=' + encodeURIComponent($('#fq').value || ''));
       $('#fkt').innerHTML = `<table><tr><th>Key</th><th>Gói</th><th>Trạng thái</th><th>Hết hạn</th><th>Khách</th><th>Máy</th><th>Tạo</th><th></th></tr>` +
-        (j.keys || []).map((k) => `<tr><td class="k">${esc(k.key)}</td><td>${esc(wPlanName(k.plan))}${k.status == 'new' && +k.days ? ` <span class="mu">(${k.days} ngày)</span>` : ''}<div class="mu">${fmt(+k.price)}</div></td>
+        (j.keys || []).map((k) => `<tr><td class="k">${esc(k.key)}</td><td>${esc(fPlanName(k.plan))}${k.status == 'new' && +k.days ? ` <span class="mu">(${k.days} ngày)</span>` : ''}<div class="mu">${fmt(+k.price)}</div></td>
         <td>${kstatus(k, j.now)}</td><td>${k.status == 'new' ? '' : (+k.expires_at === 0 ? '<b>Vĩnh viễn</b>' : d(+k.expires_at))}</td>
         <td>${esc(k.customer || '')}<div class="mu">${esc(k.note || '')}</div></td><td class="mono mu" title="${esc(k.machine || '')}">${esc((k.machine || '').slice(0, 10))}</td><td class="mu">${d(+k.created_at)}</td>
         <td class="acts"><button class="g" onclick="fact('note','${k.key}')">Ghi chú</button><button class="g" onclick="fact('reset_machine','${k.key}')">Đổi máy</button>${+k.days || (+k.expires_at > 0) ? `<button class="g" onclick="fact('extend','${k.key}')">+ ngày</button>` : ''}
@@ -568,7 +568,7 @@ async function act(a,key){let body={key};
     async f_installs(m) {
       const j = await AF('installs', { limit: 300 });
       const L = j.list || [];
-      m.innerHTML = `<div class="row"><label style="flex:1">Tìm máy<input id="fq" placeholder="Mã máy hoặc key" oninput="R.wFilter()"></label>
+      m.innerHTML = `<div class="row"><label style="flex:1">Tìm máy<input id="fq" placeholder="Mã máy hoặc key" oninput="R.fFilter()"></label>
         <span class="mu" style="align-self:center">${j.stats ? j.stats.total : L.length} máy đã cài</span></div>
         <table id="ftbl"><tr><th>Mã máy</th><th>Hệ điều hành</th><th>Phiên bản</th><th>Cài lần đầu</th><th>Hoạt động gần nhất</th><th>Gói</th><th>Key</th></tr>` +
         L.map((x) => `<tr data-q="${esc((x.machine + ' ' + (x.key || '')).toLowerCase())}"><td class="mono">${esc(String(x.machine).slice(0, 12))}…</td>
@@ -576,7 +576,7 @@ async function act(a,key){let body={key};
           <td class="mu">${ago(+x.last_at)}</td><td>${x.tier == 'pro' ? '<span class="tag t-paid">VĨNH VIỄN</span>' : '<span class="tag">Dùng thử</span>'}</td>
           <td class="k">${esc(x.key || '')}</td></tr>`).join('') + '</table>';
     },
-    wFilter() { const q = $('#fq').value.trim().toLowerCase(); document.querySelectorAll('#ftbl tr[data-q]').forEach((r) => { r.style.display = !q || r.dataset.q.includes(q) ? '' : 'none'; }); },
+    fFilter() { const q = $('#fq').value.trim().toLowerCase(); document.querySelectorAll('#ftbl tr[data-q]').forEach((r) => { r.style.display = !q || r.dataset.q.includes(q) ? '' : 'none'; }); },
 
     async f_links(m) {
       const j = await AF('links');
@@ -587,9 +587,9 @@ async function act(a,key){let body={key};
         `</div></div>
         <div class="box"><h3>Gói VĨNH VIỄN</h3><label>Giá (VNĐ)<input id="fl_price" value="${+j.price || ''}" style="width:160px"></label>
         <p class="mu">Auto Flow chỉ bán 1 gói VĨNH VIỄN (mua 1 lần, dùng mãi mãi).</p></div>
-        <p><button onclick="R.wSaveLinks()">💾 Lưu tất cả</button></p>`;
+        <p><button onclick="R.fSaveLinks()">💾 Lưu tất cả</button></p>`;
     },
-    async wSaveLinks() {
+    async fSaveLinks() {
       const links = {}; LINKS.forEach(([k]) => { links[k] = $('#fl_' + k).value.trim(); });
       const j = await AF('links', { links, price: $('#fl_price').value.trim() });
       if (j.ok) { toast('Đã lưu. App của khách sẽ nhận link mới ở lần mở sau.'); go('f_links'); }
@@ -623,20 +623,20 @@ async function act(a,key){let body={key};
         <label style="flex-direction:row;align-items:center;gap:6px;color:var(--tx)"><input id="frman" type="checkbox"> Bắt buộc mọi người cập nhật</label></div>
         <p class="mu">Bản GitHub đã build: ${G.version ? 'v' + esc(G.version) + ' · ' + mb(G.size) : '<b>chưa có</b>'}</p>
         <label class="mu" style="display:block;margin-bottom:6px">Có gì mới (khách đọc trong hộp thoại cập nhật)</label><textarea id="frn" rows="5" style="width:100%" placeholder="- Thêm …&#10;- Sửa lỗi …"></textarea>
-        <p><button onclick="R.wPublish()">🚀 Phát hành</button></p></div>
+        <p><button onclick="R.fPublish()">🚀 Phát hành</button></p></div>
         <h3>Lịch sử phát hành (Windows)</h3><table><tr><th>Phiên bản</th><th>Lúc</th><th>Dung lượng</th><th>Ghi chú</th><th>Trạng thái</th><th></th></tr>` +
         (j.releases || []).map((r) => `<tr><td><b>v${esc(r.version)}</b>${+r.id == j.latest_id ? ' <span class="tag t-active">đang phát</span>' : ''}</td><td class="mu">${dt(+r.created_at)}</td><td class="mu">${mb(+r.size)}</td>
           <td style="white-space:pre-wrap;max-width:420px">${esc(r.notes || '')}</td><td>${+r.active ? '<span class="tag t-paid">bật</span>' : '<span class="tag t-revoked">đã ngừng</span>'}</td>
-          <td class="acts">${+r.active ? `<button class="r" onclick="R.wToggle(${r.id},0)">Ngừng phát</button>` : `<button class="g" onclick="R.wToggle(${r.id},1)">Phát lại</button>`}</td></tr>`).join('') + '</table>';
+          <td class="acts">${+r.active ? `<button class="r" onclick="R.fToggle(${r.id},0)">Ngừng phát</button>` : `<button class="g" onclick="R.fToggle(${r.id},1)">Phát lại</button>`}</td></tr>`).join('') + '</table>';
     },
-    async wPublish() {
+    async fPublish() {
       const v = $('#frv').value.trim();
       if (!confirm('Phát hành Auto Flow bản ' + v + ' (Windows) cho tất cả khách?')) return;
       toast('Đang kiểm tra bộ cài…');
       const j = await AF('release_publish', { version: v, min_version: $('#frmin').value, mandatory: $('#frman').checked, notes: $('#frn').value, github: true });
       if (j.ok) { toast('Đã phát hành v' + j.version + '. App của khách sẽ thấy trong vài phút.'); go('f_release'); }
     },
-    async wToggle(id, on) {
+    async fToggle(id, on) {
       if (!on && !confirm('Ngừng phát bản này? Khách sẽ nhận bản đang bật mới nhất còn lại.')) return;
       const j = await AF('release_toggle', { id, active: on });
       if (j.ok) go('f_release');
